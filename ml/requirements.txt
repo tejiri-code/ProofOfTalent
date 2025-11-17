@@ -1,0 +1,9 @@
+numpy
+pandas
+scikit-learn
+xgboost
+spacy
+pdfplumber
+requests
+openai
+python-dotenv
