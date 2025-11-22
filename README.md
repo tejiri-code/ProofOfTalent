@@ -175,8 +175,7 @@ This project is proprietary software. All rights reserved.
 ## 📞 Support
 
 For questions or support:
-- Email: support@proofoftalent.ai
-- Documentation: https://docs.proofoftalent.ai
+
 - Issues: GitHub Issues tab
 
 ## 🗺️ Roadmap
