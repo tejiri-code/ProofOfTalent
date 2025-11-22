@@ -166,6 +166,13 @@ def generate_evidence_questionnaire(field: str) -> List[Dict[str, Any]]:
                 'required': False
             },
             {
+                'id': 'portfolio_url',
+                'question': 'Portfolio or personal website URL',
+                'type': 'text',
+                'required': True,
+                'help_text': 'Your portfolio website showcasing your projects, work, and achievements'
+            },
+            {
                 'id': 'has_founded_company',
                 'question': 'Have you founded or held a senior role in a product-led digital technology company?',
                 'type': 'yes_no',
@@ -198,6 +205,13 @@ def generate_evidence_questionnaire(field: str) -> List[Dict[str, Any]]:
         ],
         'arts_culture': [
             {
+                'id': 'portfolio_url',
+                'question': 'Portfolio, exhibition website, or online gallery URL',
+                'type': 'text',
+                'required': True,
+                'help_text': 'Website showcasing your artistic work, exhibitions, or performances'
+            },
+            {
                 'id': 'countries_worked',
                 'question': 'How many countries have you worked or exhibited in?',
                 'type': 'number',
@@ -223,6 +237,13 @@ def generate_evidence_questionnaire(field: str) -> List[Dict[str, Any]]:
             }
         ],
         'science_research': [
+            {
+                'id': 'portfolio_url',
+                'question': 'Academic or research profile URL (e.g., personal website, Google Scholar, ResearchGate)',
+                'type': 'text',
+                'required': False,
+                'help_text': 'Link to your academic profile or personal research website'
+            },
             {
                 'id': 'peer_reviewed_pubs',
                 'question': 'Number of peer-reviewed publications',
@@ -414,6 +435,72 @@ def analyze_linkedin_profile(linkedin_url: str) -> Dict[str, Any]:
     }
 
 
+def analyze_portfolio_website(portfolio_url: str) -> Dict[str, Any]:
+    """Fetch and analyze portfolio website content
+    
+    Args:
+        portfolio_url: URL of the portfolio website to analyze
+        
+    Returns:
+        Dict containing portfolio URL and extracted content/metadata
+    """
+    if not portfolio_url or not portfolio_url.startswith('http'):
+        return {
+            'error': 'Invalid portfolio URL',
+            'url': portfolio_url
+        }
+    
+    try:
+        # Fetch portfolio content with timeout
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        response = requests.get(portfolio_url, headers=headers, timeout=15)
+        
+        if response.status_code != 200:
+            return {
+                'url': portfolio_url,
+                'error': f'Failed to fetch portfolio (Status: {response.status_code})',
+                'accessible': False
+            }
+        
+        # Get raw HTML content
+        html_content = response.text
+        
+        # Basic content extraction (strip HTML tags for simple text analysis)
+        # In production, could use BeautifulSoup for better parsing
+        import re
+        text_content = re.sub(r'<script[^>]*>.*?</script>', '', html_content, flags=re.DOTALL | re.IGNORECASE)
+        text_content = re.sub(r'<style[^>]*>.*?</style>', '', text_content, flags=re.DOTALL | re.IGNORECASE)
+        text_content = re.sub(r'<[^>]+>', ' ', text_content)
+        text_content = re.sub(r'\s+', ' ', text_content).strip()
+        
+        # Truncate if too long (keep first 5000 chars for LLM context)
+        if len(text_content) > 5000:
+            text_content = text_content[:5000] + "... [truncated]"
+        
+        return {
+            'url': portfolio_url,
+            'accessible': True,
+            'content': text_content,
+            'content_length': len(html_content),
+            'extracted_text_length': len(text_content)
+        }
+    
+    except requests.exceptions.Timeout:
+        return {
+            'url': portfolio_url,
+            'error': 'Portfolio website request timed out',
+            'accessible': False
+        }
+    except Exception as e:
+        return {
+            'url': portfolio_url,
+            'error': f'Error analyzing portfolio: {str(e)}',
+            'accessible': False
+        }
+
+
 if __name__ == "__main__":
     print("UK Global Talent Visa Analysis System")
     print("Supported fields:", list(GLOBAL_TALENT_FIELDS.values()))
@@ -430,7 +517,8 @@ def analyze_evidence_with_llm(
     field: str,
     documents: Dict[str, Any],
     questionnaire_responses: Dict[str, Any],
-    github_data: Optional[Dict[str, Any]] = None
+    github_data: Optional[Dict[str, Any]] = None,
+    portfolio_data: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """Main LLM analysis function for Global Talent visa evidence
     
@@ -489,6 +577,22 @@ You are an expert UK immigration advisor specializing in the Global Talent visa.
 {json.dumps(github_data, indent=2)}
 """
     
+    if portfolio_data and portfolio_data.get('accessible'):
+        prompt += f"""
+
+6. **Portfolio Website:**
+URL: {portfolio_data.get('url')}
+Content Preview:
+{portfolio_data.get('content', 'No content extracted')[:2500]}
+"""
+    elif portfolio_data and portfolio_data.get('error'):
+        prompt += f"""
+
+6. **Portfolio Website:**
+URL: {portfolio_data.get('url')}
+Note: Portfolio could not be accessed - {portfolio_data.get('error')}
+"""
+    
     prompt += """
 
 **YOUR TASK:**
@@ -526,6 +630,7 @@ Evaluate this candidate's application against the official Global Talent visa cr
 
 **CRITICAL INSTRUCTIONS:**
 1. Be thorough and precise. Base your assessment on actual evidence provided, not assumptions.
+
 2. For "cv_feedback.strengths": You MUST reference specific points from the CV. Examples:
    - "CV shows 8+ years of experience at leading tech companies including [Company Name] as [Role]"
    - "Strong evidence of innovation through [specific project/achievement mentioned in CV]"
@@ -536,14 +641,23 @@ Evaluate this candidate's application against the official Global Talent visa cr
    - "Missing clear evidence of international recognition or publications"
    - "Work experience section doesn't highlight innovation contributions sufficiently"
    
-4. For "strengths": Reference concrete CV points, not generic statements. Examples:
+4. For "strengths": Reference concrete CV points AND portfolio content (if provided), not generic statements. Examples:
    - "Led development of [specific technology/product mentioned] at [Company]"
    - "Published [number] technical papers in [specific areas mentioned in CV]"
+   - "Portfolio showcases [specific project] demonstrating [specific skill or innovation]"
    - "Founded [company name] which achieved [specific milestone from CV]"
    
-5. Avoid generic statements like "good technical background" or "strong experience". Instead, cite specific roles, companies, technologies, achievements, or time periods from the CV.
+5. **PORTFOLIO EVALUATION** (if portfolio website was provided):
+   - Reference specific projects, work samples, or achievements visible on the portfolio
+   - Evaluate how well the portfolio demonstrates innovation, recognition, or expertise required for the visa
+   - Note if portfolio provides evidence not present in the CV
+   - Comment on presentation quality and professional branding if relevant to the field
+   
+6. Avoid generic statements like "good technical background" or "strong experience". Instead, cite specific roles, companies, technologies, achievements, or portfolio projects.
 
-6. If the CV is missing critical information for the visa criteria, explicitly state what's absent and where it should be included.
+7. If the CV is missing critical information for the visa criteria, explicitly state what's absent and where it should be included.
+
+8. Cross-reference evidence across different sources (CV, portfolio, GitHub, letters) to build a comprehensive picture of the candidate's qualifications.
 """
     
     try:
@@ -679,6 +793,7 @@ def analyze_global_talent_application(
     # Extract URLs from CV if available
     github_data = None
     linkedin_data = None
+    portfolio_data = None
     
     if documents.get('cv'):
         cv_text = documents['cv'].get('text', '')
@@ -691,13 +806,22 @@ def analyze_global_talent_application(
         if urls.get('linkedin'):
             linkedin_data = analyze_linkedin_profile(urls['linkedin'])
     
+    # Check for portfolio URL in questionnaire responses
+    portfolio_url = questionnaire_responses.get('portfolio_url')
+    if portfolio_url:
+        print(f"Fetching portfolio data from {portfolio_url}...")
+        portfolio_data = analyze_portfolio_website(portfolio_url)
+        if portfolio_data.get('error'):
+            print(f"Warning: Could not fetch portfolio - {portfolio_data.get('error')}")
+    
     # Run LLM analysis
     print("Running LLM analysis...")
     analysis = analyze_evidence_with_llm(
         field=field,
         documents=documents,
         questionnaire_responses=questionnaire_responses,
-        github_data=github_data
+        github_data=github_data,
+        portfolio_data=portfolio_data
     )
     
     # Generate roadmap

@@ -329,7 +329,7 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
 
             <div className="grid md:grid-cols-2 gap-8">
                 {/* Strengths */}
-                {analysis.strengths.length > 0 && (
+                {analysis.cv_feedback && analysis.cv_feedback.strengths?.length > 0 && (
                     <div className="bg-white rounded-2xl shadow-xl p-8 border-l-4 border-green-500 h-full">
                         <div className="flex items-center mb-6">
                             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
@@ -340,7 +340,7 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
                             <h3 className="text-xl font-bold text-gray-900">Key Strengths</h3>
                         </div>
                         <ul className="space-y-4">
-                            {analysis.strengths.map((strength, idx) => (
+                            {analysis.cv_feedback.strengths.map((strength, idx) => (
                                 <li key={idx} className="flex items-start p-3 bg-green-50/50 rounded-lg">
                                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                                     <span className="text-gray-700 leading-relaxed">{strength}</span>
@@ -351,7 +351,7 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
                 )}
 
                 {/* Gaps */}
-                {analysis.gaps.length > 0 && (
+                {analysis.cv_feedback && analysis.cv_feedback.weaknesses?.length > 0 && (
                     <div className="bg-white rounded-2xl shadow-xl p-8 border-l-4 border-amber-500 h-full">
                         <div className="flex items-center mb-6">
                             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
@@ -361,27 +361,14 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
                             </div>
                             <h3 className="text-xl font-bold text-gray-900">Areas for Improvement</h3>
                         </div>
-                        <div className="space-y-4">
-                            {analysis.gaps.map((gap, idx) => (
-                                <div key={idx} className="bg-amber-50/50 rounded-xl p-4 border border-amber-100">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <span className="font-semibold text-gray-900">{gap.type.replace(/_/g, ' ')}</span>
-                                        <span className={`px-2 py-1 text-xs font-bold rounded-full uppercase tracking-wide ${gap.severity === 'critical' ? 'bg-red-100 text-red-700' :
-                                            gap.severity === 'high' ? 'bg-orange-100 text-orange-700' :
-                                                gap.severity === 'medium' ? 'bg-amber-100 text-amber-700' :
-                                                    'bg-blue-100 text-blue-700'
-                                            }`}>
-                                            {gap.severity}
-                                        </span>
-                                    </div>
-                                    <p className="text-gray-600 text-sm mb-3">{gap.description}</p>
-                                    <div className="flex items-start text-sm bg-white p-3 rounded-lg border border-amber-100/50">
-                                        <span className="mr-2">💡</span>
-                                        <span className="text-amber-800 font-medium">{gap.recommendation}</span>
-                                    </div>
-                                </div>
+                        <ul className="space-y-4">
+                            {analysis.cv_feedback.weaknesses.map((weakness, idx) => (
+                                <li key={idx} className="flex items-start p-3 bg-amber-50/50 rounded-lg">
+                                    <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    <span className="text-gray-700 leading-relaxed">{weakness}</span>
+                                </li>
                             ))}
-                        </div>
+                        </ul>
                     </div>
                 )}
             </div>

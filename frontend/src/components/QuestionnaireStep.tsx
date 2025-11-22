@@ -81,6 +81,27 @@ export default function QuestionnaireStep({ field, sessionId, initialResponses =
                 );
             case 'text':
             default:
+                // Check if this is a URL field (github_url, portfolio_url, etc.)
+                const isUrlField = question.id.includes('url') || question.question.toLowerCase().includes('url');
+
+                if (isUrlField) {
+                    return (
+                        <div>
+                            <input
+                                type="url"
+                                value={value || ''}
+                                onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
+                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-blue-500 text-gray-900 transition-all outline-none"
+                                required={question.required}
+                                placeholder="https://..."
+                            />
+                            {question.help_text && (
+                                <p className="mt-2 text-sm text-gray-500">{question.help_text}</p>
+                            )}
+                        </div>
+                    );
+                }
+
                 return (
                     <textarea
                         value={value || ''}

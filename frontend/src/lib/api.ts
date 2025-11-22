@@ -15,6 +15,7 @@ export interface Question {
   file_types?: string[];
   min_files?: number;
   max_files?: number;
+  help_text?: string;
 }
 
 export interface Session {
