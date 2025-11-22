@@ -119,14 +119,14 @@ export default function QuestionnaireStep({ field, sessionId, initialResponses =
         <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
                 <div className="mb-8">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Questionnaire</h2>
-                    <p className="text-gray-600">Please answer the following questions to help us assess your profile.</p>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 text-shadow-sm">Questionnaire</h2>
+                    <p className="text-gray-700 font-medium">Please answer the following questions to help us assess your profile.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {questions.map((question) => (
                         <div key={question.id} className="bg-gray-50 p-6 rounded-xl border border-gray-100">
-                            <label className="block text-base font-semibold text-gray-900 mb-3">
+                            <label className="block text-base font-semibold text-gray-900 mb-3 leading-snug">
                                 {question.question}
                                 {question.required && <span className="text-red-500 ml-1">*</span>}
                             </label>

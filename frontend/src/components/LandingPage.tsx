@@ -20,29 +20,29 @@ export default function LandingPage({ onStart }: LandingPageProps) {
                     {/* <div className="relative w-24 h-24 mx-auto mb-8">
                         <Image
                             src="/Gemini_Generated_Image_wai7uiwai7uiwai7-removebg-preview.png"
-                            alt="Proof of Talent Logo"
+                            alt="GtCompass Logo"
                             fill
                             className="object-contain drop-shadow-xl"
                             priority
                         />
                     </div> */}
 
-                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900">
+                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 text-shadow-sm">
                         Validate Your <br />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 animate-gradient">
                             Global Talent Potential
                         </span>
                     </h1>
 
-                    <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                        AI-powered assessment for the UK Global Talent Visa.
+                    <p className="text-xl md:text-2xl text-gray-700 max-w-2xl mx-auto leading-relaxed font-medium">
+                        AI-powered assessment for the <span className="text-blue-600 font-semibold">UK Global Talent Visa</span>.
                         Get a detailed evidence gap analysis and strategic roadmap in minutes.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <button
                             onClick={onStart}
-                            className="md:px-8 md:py-4 px-10 py-4 bg-blue-600 text-white text-lg font-bold rounded-full hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-1 md:w-full sm:w-auto"
+                            className="md:px-8 md:py-4 px-10 py-4 bg-blue-600 text-white text-lg font-bold rounded-full hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-1 md:w-full sm:w-auto cursor-pointer"
                         >
                             Check My Eligibility
                         </button>
@@ -58,8 +58,8 @@ export default function LandingPage({ onStart }: LandingPageProps) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
-                            <h3 className="font-bold text-gray-900 mb-2">Instant Analysis</h3>
-                            <p className="text-sm text-gray-600">Get immediate feedback on your profile's strength against official visa criteria.</p>
+                            <h3 className="font-bold text-lg text-gray-900 mb-2">Instant Analysis</h3>
+                            <p className="text-sm text-gray-700 leading-relaxed">Get immediate feedback on your profile's strength against official visa criteria.</p>
                         </div>
                         <div className="bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-sm">
                             <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mb-4 text-purple-600">
@@ -67,8 +67,8 @@ export default function LandingPage({ onStart }: LandingPageProps) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                 </svg>
                             </div>
-                            <h3 className="font-bold text-gray-900 mb-2">Gap Identification</h3>
-                            <p className="text-sm text-gray-600">Pinpoint exactly what evidence is missing or needs improvement in your application.</p>
+                            <h3 className="font-bold text-lg text-gray-900 mb-2">Gap Identification</h3>
+                            <p className="text-sm text-gray-700 leading-relaxed">Pinpoint exactly what evidence is missing or needs improvement in your application.</p>
                         </div>
                         <div className="bg-white/50 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-sm">
                             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-4 text-green-600">
@@ -76,8 +76,8 @@ export default function LandingPage({ onStart }: LandingPageProps) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7" />
                                 </svg>
                             </div>
-                            <h3 className="font-bold text-gray-900 mb-2">Strategic Roadmap</h3>
-                            <p className="text-sm text-gray-600">Receive a step-by-step action plan to build your case and increase success probability.</p>
+                            <h3 className="font-bold text-lg text-gray-900 mb-2">Strategic Roadmap</h3>
+                            <p className="text-sm text-gray-700 leading-relaxed">Receive a step-by-step action plan to build your case and increase success probability.</p>
                         </div>
                     </div>
                 </div>

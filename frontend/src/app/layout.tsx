@@ -13,18 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Proof of Talent | UK Global Talent Visa Assessment",
+  title: "GtCompass - Global Talent Compass | UK Global Talent Visa Assessment",
   description:
     "AI-powered assessment for the UK Global Talent Visa. Get a detailed roadmap in minutes.",
   openGraph: {
-    title: "Proof of Talent | UK Global Talent Visa Assessment",
+    title: "GtCompass - Global Talent Compass | UK Global Talent Visa Assessment",
     description:
       "AI-powered assessment for the UK Global Talent Visa. Get a detailed roadmap in minutes.",
     images: ["/Gemini_Generated_Image_wai7uiwai7uiwai7-removebg-preview.png"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Proof of Talent | UK Global Talent Visa Assessment",
+    title: "GtCompass - Global Talent Compass | UK Global Talent Visa Assessment",
     description:
       "AI-powered assessment for the UK Global Talent Visa. Get a detailed roadmap in minutes.",
     images: ["/Gemini_Generated_Image_wai7uiwai7uiwai7-removebg-preview.png"],

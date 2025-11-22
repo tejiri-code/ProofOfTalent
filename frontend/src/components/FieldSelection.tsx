@@ -41,17 +41,17 @@ export default function FieldSelection({ onNext }: FieldSelectionProps) {
         <div className="max-w-2xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
                 <div className="text-center mb-10">
-                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-shadow-sm">
                         UK Global Talent Visa Analysis
                     </h1>
-                    <p className="text-lg text-gray-600">
-                        Get AI-powered analysis of your visa application using GPT-4
+                    <p className="text-lg text-gray-700 font-medium">
+                        Get AI-powered analysis of your visa application using <span className="text-blue-600 font-semibold">GPT-4</span>
                     </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     <div>
-                        <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">
+                        <label className="block text-sm font-bold text-gray-800 uppercase tracking-wider mb-4">
                             Select your field
                         </label>
                         <div className="space-y-4">

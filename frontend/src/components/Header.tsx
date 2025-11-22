@@ -9,14 +9,17 @@ export default function Header() {
                         <div className="relative w-10 h-10 mr-3">
                             <Image
                                 src="/Gemini_Generated_Image_wai7uiwai7uiwai7-removebg-preview.png"
-                                alt="Proof of Talent Logo"
+                                alt="GtCompass Logo"
                                 fill
                                 className="object-contain"
                             />
                         </div>
-                        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-                            Proof of Talent
-                        </span>
+                        <div className="flex flex-col">
+                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                                GtCompass
+                            </span>
+                            <span className="text-xs text-gray-500 -mt-1">Global Talent Compass</span>
+                        </div>
                     </div>
                     {/* <nav className="hidden md:flex space-x-8">
                         <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors text-sm font-medium">How it Works</a>

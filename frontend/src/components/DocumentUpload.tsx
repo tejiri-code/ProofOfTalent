@@ -53,8 +53,8 @@ export default function DocumentUpload({ sessionId, initialFiles = [], onFilesCh
         <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
                 <div className="mb-8">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Upload Documents</h2>
-                    <p className="text-gray-600">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 text-shadow-sm">Upload Documents</h2>
+                    <p className="text-gray-700 font-medium">
                         Upload your CV, recommendation letters, and portfolio items (PDF or DOCX)
                     </p>
                 </div>
@@ -89,7 +89,7 @@ export default function DocumentUpload({ sessionId, initialFiles = [], onFilesCh
 
                     {files.length > 0 && (
                         <div className="space-y-3">
-                            <h3 className="font-bold text-gray-900 flex items-center">
+                            <h3 className="font-bold text-lg text-gray-900 flex items-center">
                                 <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full mr-2">{files.length}</span>
                                 Selected Files
                             </h3>
