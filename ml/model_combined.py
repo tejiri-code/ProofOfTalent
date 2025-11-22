@@ -508,8 +508,8 @@ Evaluate this candidate's application against the official Global Talent visa cr
     },
     "cv_feedback": {
         "score": <integer 0-10 representing CV quality for this visa>,
-        "strengths": [<list of specific strengths in the CV structure/content>],
-        "weaknesses": [<list of specific weaknesses or missing elements in the CV>]
+        "strengths": [<list of specific strengths - MUST reference actual CV content with quotes or specific examples>],
+        "weaknesses": [<list of specific weaknesses - MUST reference actual CV gaps or issues with specific examples>]
     },
     "gaps": [
         {
@@ -519,13 +519,31 @@ Evaluate this candidate's application against the official Global Talent visa cr
             "recommendation": "<specific action to address this gap>"
         }
     ],
-    "strengths": [<list of key strengths in the application>],
+    "strengths": [<list of key strengths - MUST reference specific CV points, achievements, or experiences>],
     "overall_assessment": "<detailed paragraph explaining the likelihood score>",
     "next_steps": [<list of recommended actions>]
 }
 
-Be thorough and precise. Base your assessment on actual evidence provided, not assumptions.
-For "cv_feedback", focus specifically on the CV document itself - its formatting, clarity, and how well it highlights the required criteria.
+**CRITICAL INSTRUCTIONS:**
+1. Be thorough and precise. Base your assessment on actual evidence provided, not assumptions.
+2. For "cv_feedback.strengths": You MUST reference specific points from the CV. Examples:
+   - "CV shows 8+ years of experience at leading tech companies including [Company Name] as [Role]"
+   - "Strong evidence of innovation through [specific project/achievement mentioned in CV]"
+   - "Clear progression from [junior role] to [senior role] demonstrating career growth"
+   
+3. For "cv_feedback.weaknesses": You MUST identify specific gaps or issues in the CV. Examples:
+   - "CV lacks quantifiable metrics for achievements (e.g., no mention of team size, impact, or scale)"
+   - "Missing clear evidence of international recognition or publications"
+   - "Work experience section doesn't highlight innovation contributions sufficiently"
+   
+4. For "strengths": Reference concrete CV points, not generic statements. Examples:
+   - "Led development of [specific technology/product mentioned] at [Company]"
+   - "Published [number] technical papers in [specific areas mentioned in CV]"
+   - "Founded [company name] which achieved [specific milestone from CV]"
+   
+5. Avoid generic statements like "good technical background" or "strong experience". Instead, cite specific roles, companies, technologies, achievements, or time periods from the CV.
+
+6. If the CV is missing critical information for the visa criteria, explicitly state what's absent and where it should be included.
 """
     
     try:
