@@ -14,6 +14,7 @@ from urllib.parse import urlparse
 
 # PDF parsing
 import pdfplumber
+import docx
 
 # spaCy for NLP
 import spacy
@@ -140,19 +141,19 @@ def generate_evidence_questionnaire(field: str) -> List[Dict[str, Any]]:
         },
         {
             'id': 'cv_uploaded',
-            'question': 'Upload your CV/Resume (PDF format)',
+            'question': 'Upload your CV/Resume (PDF or DOCX format)',
             'type': 'file_upload',
             'required': True,
-            'file_types': ['pdf']
+            'file_types': ['pdf', 'docx']
         },
         {
             'id': 'recommendation_letters',
-            'question': 'Upload up to 3 recommendation letters (PDF format)',
+            'question': 'Upload up to 3 recommendation letters (PDF or DOCX format)',
             'type': 'file_upload_multiple',
             'required': True,
             'min_files': 3,
             'max_files': 3,
-            'file_types': ['pdf']
+            'file_types': ['pdf', 'docx']
         }
     ]
     
@@ -274,6 +275,19 @@ def parse_pdf_document(file_path: str) -> str:
         return ""
 
 
+def parse_docx_document(file_path: str) -> str:
+    """Extract text from DOCX file"""
+    try:
+        doc = docx.Document(file_path)
+        full_text = []
+        for para in doc.paragraphs:
+            full_text.append(para.text)
+        return '\n'.join(full_text)
+    except Exception as e:
+        print(f"Error parsing DOCX {file_path}: {e}")
+        return ""
+
+
 def parse_multiple_documents(file_paths: List[str]) -> Dict[str, Any]:
     """Parse multiple evidence documents (CV, letters, portfolio items)
     
@@ -290,7 +304,11 @@ def parse_multiple_documents(file_paths: List[str]) -> Dict[str, Any]:
             print(f"Warning: File not found: {path}")
             continue
             
-        text = parse_pdf_document(path)
+        if path.lower().endswith('.docx'):
+            text = parse_docx_document(path)
+        else:
+            text = parse_pdf_document(path)
+            
         filename = os.path.basename(path).lower()
         
         # Classify document type based on filename
@@ -488,6 +506,11 @@ Evaluate this candidate's application against the official Global Talent visa cr
         "innovation_evidence": [<list of identified innovation evidence>],
         "recognition_evidence": [<list of identified recognition evidence>]
     },
+    "cv_feedback": {
+        "score": <integer 0-10 representing CV quality for this visa>,
+        "strengths": [<list of specific strengths in the CV structure/content>],
+        "weaknesses": [<list of specific weaknesses or missing elements in the CV>]
+    },
     "gaps": [
         {
             "type": "<gap type>",
@@ -502,6 +525,7 @@ Evaluate this candidate's application against the official Global Talent visa cr
 }
 
 Be thorough and precise. Base your assessment on actual evidence provided, not assumptions.
+For "cv_feedback", focus specifically on the CV document itself - its formatting, clarity, and how well it highlights the required criteria.
 """
     
     try:

@@ -214,10 +214,10 @@ async def upload_documents(
     uploaded_files = []
     
     for file in files:
-        if not file.filename.lower().endswith('.pdf'):
-            # Skip non-pdf files or raise error depending on requirement
+        if not file.filename.lower().endswith(('.pdf', '.docx')):
+            # Skip non-pdf/docx files or raise error depending on requirement
             # For now, we'll be strict as per original code
-            raise HTTPException(status_code=400, detail=f"Only PDF files allowed: {file.filename}")
+            raise HTTPException(status_code=400, detail=f"Only PDF or DOCX files allowed: {file.filename}")
         
         file_path = session_dir / file.filename
         

@@ -47,15 +47,19 @@ export default function QuestionnaireStep({ field, sessionId, onNext, onBack }: 
                         type="number"
                         value={value ?? ''}
                         onChange={(e) => setResponses({ ...responses, [question.id]: e.target.valueAsNumber })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-blue-500 text-gray-900 transition-all outline-none"
                         required={question.required}
+                        placeholder="0"
                     />
                 );
             case 'yes_no':
                 return (
                     <div className="flex space-x-4">
                         {['yes', 'no'].map((option) => (
-                            <label key={option} className="flex items-center">
+                            <label key={option} className={`flex-1 flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer transition-all ${(option === 'yes' && value === true) || (option === 'no' && value === false)
+                                    ? 'border-blue-500 bg-blue-50 text-blue-700 font-bold'
+                                    : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                                }`}>
                                 <input
                                     type="radio"
                                     name={question.id}
@@ -66,7 +70,7 @@ export default function QuestionnaireStep({ field, sessionId, onNext, onBack }: 
                                             : option === 'no' && value === false
                                     }
                                     onChange={() => setResponses({ ...responses, [question.id]: option === 'yes' })}
-                                    className="mr-2 text-gray-900"
+                                    className="sr-only"
                                     required={question.required}
                                 />
                                 <span className="capitalize">{option}</span>
@@ -80,23 +84,27 @@ export default function QuestionnaireStep({ field, sessionId, onNext, onBack }: 
                     <textarea
                         value={value || ''}
                         onChange={(e) => setResponses({ ...responses, [question.id]: e.target.value })}
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                        rows={4}
+                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-50 focus:border-blue-500 text-gray-900 transition-all outline-none resize-none"
                         required={question.required}
+                        placeholder="Type your answer here..."
                     />
                 );
         }
     };
 
     return (
-        <div className="max-w-3xl mx-auto p-6">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Questionnaire</h2>
+        <div className="max-w-3xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
+                <div className="mb-8">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Questionnaire</h2>
+                    <p className="text-gray-600">Please answer the following questions to help us assess your profile.</p>
+                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-8">
                     {questions.map((question) => (
-                        <div key={question.id}>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <div key={question.id} className="bg-gray-50 p-6 rounded-xl border border-gray-100">
+                            <label className="block text-base font-semibold text-gray-900 mb-3">
                                 {question.question}
                                 {question.required && <span className="text-red-500 ml-1">*</span>}
                             </label>
@@ -105,25 +113,36 @@ export default function QuestionnaireStep({ field, sessionId, onNext, onBack }: 
                     ))}
 
                     {error && (
-                        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start">
+                            <svg className="w-5 h-5 text-red-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             <p className="text-sm text-red-600">{error}</p>
                         </div>
                     )}
 
-                    <div className="flex space-x-4">
+                    <div className="flex flex-col-reverse md:flex-row gap-4 pt-4">
                         <button
                             type="button"
                             onClick={onBack}
-                            className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                            className="px-8 py-4 border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all"
                         >
                             Back
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                            className="flex-1 py-4 px-8 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-0.5"
                         >
-                            {loading ? 'Submitting...' : 'Continue'}
+                            {loading ? (
+                                <span className="flex items-center justify-center">
+                                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Submitting...
+                                </span>
+                            ) : 'Continue'}
                         </button>
                     </div>
                 </form>

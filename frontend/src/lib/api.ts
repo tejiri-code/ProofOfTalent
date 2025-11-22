@@ -40,6 +40,11 @@ export interface AnalysisResult {
       }>;
       strengths: string[];
       overall_assessment: string;
+      cv_feedback?: {
+        score: number;
+        strengths: string[];
+        weaknesses: string[];
+      };
     };
     roadmap: {
       milestones: Array<{

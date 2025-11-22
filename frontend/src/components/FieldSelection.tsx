@@ -38,27 +38,29 @@ export default function FieldSelection({ onNext }: FieldSelectionProps) {
     };
 
     return (
-        <div className="max-w-2xl mx-auto p-6">
-            <div className="bg-white rounded-lg shadow-lg p-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    UK Global Talent Visa Analysis
-                </h1>
-                <p className="text-gray-600 mb-8">
-                    Get AI-powered analysis of your visa application using GPT-4
-                </p>
+        <div className="max-w-2xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
+                <div className="text-center mb-10">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        UK Global Talent Visa Analysis
+                    </h1>
+                    <p className="text-lg text-gray-600">
+                        Get AI-powered analysis of your visa application using GPT-4
+                    </p>
+                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-8">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-4">
+                        <label className="block text-sm font-bold text-gray-700 uppercase tracking-wide mb-4">
                             Select your field
                         </label>
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                             {fields.map((field) => (
                                 <label
                                     key={field.id}
-                                    className={`block p-4 border-2 rounded-lg cursor-pointer transition-all ${selectedField === field.id
-                                            ? 'border-blue-500 bg-blue-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                    className={`group relative block p-6 border-2 rounded-xl cursor-pointer transition-all duration-200 ${selectedField === field.id
+                                        ? 'border-blue-500 bg-blue-50 shadow-md shadow-blue-100'
+                                        : 'border-gray-100 hover:border-blue-200 hover:bg-gray-50'
                                         }`}
                                 >
                                     <input
@@ -70,13 +72,13 @@ export default function FieldSelection({ onNext }: FieldSelectionProps) {
                                         className="sr-only"
                                     />
                                     <div className="flex items-center">
-                                        <div className={`w-5 h-5 rounded-full border-2 mr-3 flex items-center justify-center ${selectedField === field.id ? 'border-blue-500' : 'border-gray-300'
+                                        <div className={`w-6 h-6 rounded-full border-2 mr-4 flex items-center justify-center transition-colors ${selectedField === field.id ? 'border-blue-500' : 'border-gray-300 group-hover:border-blue-400'
                                             }`}>
                                             {selectedField === field.id && (
                                                 <div className="w-3 h-3 rounded-full bg-blue-500" />
                                             )}
                                         </div>
-                                        <span className="text-lg font-medium text-gray-900">
+                                        <span className={`text-lg font-medium transition-colors ${selectedField === field.id ? 'text-blue-900' : 'text-gray-900'}`}>
                                             {field.name}
                                         </span>
                                     </div>
@@ -86,7 +88,10 @@ export default function FieldSelection({ onNext }: FieldSelectionProps) {
                     </div>
 
                     {error && (
-                        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start">
+                            <svg className="w-5 h-5 text-red-500 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             <p className="text-sm text-red-600">{error}</p>
                         </div>
                     )}
@@ -94,9 +99,17 @@ export default function FieldSelection({ onNext }: FieldSelectionProps) {
                     <button
                         type="submit"
                         disabled={!selectedField || loading}
-                        className="w-full py-3 px-4 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        className="w-full py-4 px-6 bg-blue-600 text-white font-bold text-lg rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-0.5"
                     >
-                        {loading ? 'Creating Session...' : 'Continue'}
+                        {loading ? (
+                            <span className="flex items-center justify-center">
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Creating Session...
+                            </span>
+                        ) : 'Continue'}
                     </button>
                 </form>
             </div>

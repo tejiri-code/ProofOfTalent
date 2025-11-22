@@ -37,10 +37,10 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 py-8 md:py-12">
       {/* Progress Bar */}
-      <div className="max-w-4xl mx-auto px-6 mb-8">
-        <div className="flex items-center justify-between">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 mb-8 md:mb-12">
+        <div className="flex items-center justify-between overflow-x-auto pb-4 md:pb-0">
           {['Field Selection', 'Questionnaire', 'Documents', 'Analysis'].map((label, idx) => {
             const stepMap: Step[] = ['field', 'questionnaire', 'upload', 'results'];
             const stepIndex = stepMap.indexOf(currentStep);
@@ -48,18 +48,18 @@ export default function Home() {
             const isComplete = idx < stepIndex;
 
             return (
-              <div key={label} className="flex items-center flex-1">
+              <div key={label} className="flex items-center flex-1 min-w-[120px] md:min-w-0">
                 <div className="flex items-center">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${isComplete
-                        ? 'bg-green-500 text-white'
-                        : isActive
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-600'
+                    className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-semibold text-sm md:text-base transition-colors duration-300 ${isComplete
+                      ? 'bg-green-500 text-white shadow-md shadow-green-200'
+                      : isActive
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-200 ring-4 ring-blue-50'
+                        : 'bg-white border-2 border-gray-200 text-gray-400'
                       }`}
                   >
                     {isComplete ? (
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     ) : (
@@ -67,7 +67,7 @@ export default function Home() {
                     )}
                   </div>
                   <span
-                    className={`ml-2 text-sm font-medium ${isActive ? 'text-blue-600' : isComplete ? 'text-green-600' : 'text-gray-500'
+                    className={`ml-2 md:ml-3 text-xs md:text-sm font-medium whitespace-nowrap transition-colors duration-300 ${isActive ? 'text-blue-600' : isComplete ? 'text-green-600' : 'text-gray-400'
                       }`}
                   >
                     {label}
@@ -75,7 +75,7 @@ export default function Home() {
                 </div>
                 {idx < 3 && (
                   <div
-                    className={`flex-1 h-1 mx-4 ${isComplete ? 'bg-green-500' : 'bg-gray-200'
+                    className={`flex-1 h-0.5 md:h-1 mx-2 md:mx-4 rounded-full transition-colors duration-500 ${isComplete ? 'bg-green-500' : 'bg-gray-200'
                       }`}
                   />
                 )}
@@ -86,31 +86,33 @@ export default function Home() {
       </div>
 
       {/* Main Content */}
-      {currentStep === 'field' && <FieldSelection onNext={handleFieldNext} />}
+      <div className="px-4 md:px-6">
+        {currentStep === 'field' && <FieldSelection onNext={handleFieldNext} />}
 
-      {currentStep === 'questionnaire' && (
-        <QuestionnaireStep
-          field={field}
-          sessionId={sessionId}
-          onNext={handleQuestionnaireNext}
-          onBack={() => setCurrentStep('field')}
-        />
-      )}
+        {currentStep === 'questionnaire' && (
+          <QuestionnaireStep
+            field={field}
+            sessionId={sessionId}
+            onNext={handleQuestionnaireNext}
+            onBack={() => setCurrentStep('field')}
+          />
+        )}
 
-      {currentStep === 'upload' && (
-        <DocumentUpload
-          sessionId={sessionId}
-          onNext={handleUploadNext}
-          onBack={() => setCurrentStep('questionnaire')}
-        />
-      )}
+        {currentStep === 'upload' && (
+          <DocumentUpload
+            sessionId={sessionId}
+            onNext={handleUploadNext}
+            onBack={() => setCurrentStep('questionnaire')}
+          />
+        )}
 
-      {currentStep === 'results' && (
-        <AnalysisResults
-          sessionId={sessionId}
-          onNewStart={handleNewStart}
-        />
-      )}
+        {currentStep === 'results' && (
+          <AnalysisResults
+            sessionId={sessionId}
+            onNewStart={handleNewStart}
+          />
+        )}
+      </div>
     </main>
   );
 }
