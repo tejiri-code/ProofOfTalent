@@ -1,0 +1,128 @@
+{
+  "field": "digital_technology",
+  "timestamp": "2025-11-22T11:39:08.278794+00:00",
+  "documents_analyzed": {
+    "cv": true,
+    "recommendation_letters_count": 0,
+    "portfolio_items_count": 0
+  },
+  "external_data": {
+    "github": false,
+    "linkedin": true
+  },
+  "analysis": {
+    "likelihood": 0.4,
+    "assessment_level": "Exceptional Promise",
+    "evidence_present": {
+      "mandatory_documents": {
+        "cv": "complete",
+        "recommendation_letters": "missing",
+        "portfolio_evidence": "weak"
+      },
+      "innovation_evidence": [],
+      "recognition_evidence": [
+        "Published research or technical documentation",
+        "Industry awards or recognition"
+      ]
+    },
+    "gaps": [
+      {
+        "type": "Recommendation Letters",
+        "severity": "critical",
+        "description": "The candidate has not provided any recommendation letters. These are mandatory and should come from senior professionals or organizations in the candidate's field.",
+        "recommendation": "The candidate should provide at least 3 recommendation letters from senior professionals or organizations in their field."
+      },
+      {
+        "type": "Portfolio Evidence",
+        "severity": "high",
+        "description": "The candidate has not provided any portfolio evidence. This is a critical part of the application and should include up to 10 pieces of evidence from the last 5 years.",
+        "recommendation": "The candidate should provide up to 10 pieces of evidence from the last 5 years to strengthen their application."
+      },
+      {
+        "type": "Innovation Evidence",
+        "severity": "high",
+        "description": "The candidate has not provided any evidence of innovation in the digital technology field. This is a key area of assessment for the Global Talent visa.",
+        "recommendation": "The candidate should provide evidence of innovation in the digital technology field, such as founding or holding a senior role in a product-led digital tech company, working in a new digital field or technology, or making significant technical, commercial, or entrepreneurial contributions."
+      }
+    ],
+    "strengths": [
+      "The candidate has a strong CV with relevant experience in the digital technology field.",
+      "The candidate has received industry awards and has published research or technical documentation."
+    ],
+    "overall_assessment": "The candidate has a strong CV and has demonstrated recognition in their field through awards and publications. However, they have not provided any recommendation letters or portfolio evidence, and there is no evidence of innovation in the digital technology field. This significantly reduces the likelihood of their application being successful.",
+    "next_steps": [
+      "Provide at least 3 recommendation letters from senior professionals or organizations in your field.",
+      "Provide up to 10 pieces of evidence from the last 5 years to strengthen your application.",
+      "Provide evidence of innovation in the digital technology field."
+    ]
+  },
+  "roadmap": {
+    "milestones": [
+      {
+        "title": "Collect Recommendation Letters",
+        "description": "Identify and reach out to at least three senior professionals or organizations in your field who can provide a recommendation. Explain the purpose and provide them with any necessary information about your achievements and contributions to the field.",
+        "duration_weeks": 4,
+        "priority": "critical",
+        "evidence_to_collect": [
+          "Recommendation Letter 1",
+          "Recommendation Letter 2",
+          "Recommendation Letter 3"
+        ],
+        "addresses_gaps": [
+          "Recommendation Letters"
+        ]
+      },
+      {
+        "title": "Compile Portfolio Evidence",
+        "description": "Identify and gather up to 10 pieces of evidence from the last 5 years that demonstrate your contributions to the digital technology field. This could include projects you've worked on, products you've developed, or research you've published.",
+        "duration_weeks": 8,
+        "priority": "high",
+        "evidence_to_collect": [
+          "Portfolio Evidence 1",
+          "Portfolio Evidence 2",
+          "Portfolio Evidence 3",
+          "Portfolio Evidence 4",
+          "Portfolio Evidence 5",
+          "Portfolio Evidence 6",
+          "Portfolio Evidence 7",
+          "Portfolio Evidence 8",
+          "Portfolio Evidence 9",
+          "Portfolio Evidence 10"
+        ],
+        "addresses_gaps": [
+          "Portfolio Evidence"
+        ]
+      },
+      {
+        "title": "Demonstrate Innovation",
+        "description": "Identify and gather evidence of your innovative contributions to the digital technology field. This could include founding or holding a senior role in a product-led digital tech company, working in a new digital field or technology, or making significant technical, commercial, or entrepreneurial contributions.",
+        "duration_weeks": 12,
+        "priority": "high",
+        "evidence_to_collect": [
+          "Innovation Evidence 1",
+          "Innovation Evidence 2",
+          "Innovation Evidence 3"
+        ],
+        "addresses_gaps": [
+          "Innovation Evidence"
+        ]
+      },
+      {
+        "title": "Finalize and Review Application",
+        "description": "Compile all collected evidence and recommendation letters into a cohesive application. Review the application thoroughly to ensure all requirements are met and the evidence presented is strong and relevant.",
+        "duration_weeks": 4,
+        "priority": "critical",
+        "evidence_to_collect": [],
+        "addresses_gaps": []
+      }
+    ],
+    "total_weeks": 28,
+    "feasibility_assessment": "The timeline is realistic given the 40 weeks available. It allows for ample time to collect all necessary evidence and recommendation letters, and to review the application before submission.",
+    "critical_path": [
+      "Collect Recommendation Letters",
+      "Compile Portfolio Evidence",
+      "Demonstrate Innovation",
+      "Finalize and Review Application"
+    ]
+  }
+}

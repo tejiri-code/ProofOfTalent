@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UK Global Talent Visa Analysis - Frontend
 
-## Getting Started
+Next.js frontend for the UK Global Talent visa analysis system.
 
-First, run the development server:
+## Features
 
+- **Multi-step Wizard**: Guided flow through field selection, questionnaire, document upload, and results
+- **Field Selection**: Choose from Digital Technology, Arts & Culture, or Science & Research
+- **Dynamic Questionnaire**: Field-specific questions
+- **Document Upload**: Upload CV, recommendation letters, and portfolio items
+- **Real-time Analysis**: LLM-powered analysis with GPT-4
+- **Visual Results**: Beautiful visualization of likelihood score, strengths, gaps, and roadmap
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- API Integration with FastAPI backend
+
+## Setup
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd frontend
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Create environment file:
+```bash
+cp .env.example .env.local
+# Edit .env.local if backend is not at localhost:8000
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Frontend will be available at `http://localhost:3000`
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+frontend/
+├── src/
+│   ├── app/
+│   │   └── page.tsx          # Main application with wizard flow
+│   ├── components/
+│   │   ├── FieldSelection.tsx       # Step 1: Field selection
+│   │   ├── QuestionnaireStep.tsx    # Step 2: Questionnaire
+│   │   ├── DocumentUpload.tsx       # Step 3: Document upload
+│   │   └── AnalysisResults.tsx      # Step 4: Results display
+│   └── lib/
+│       └── api.ts            # API client for backend
+├── public/                    # Static assets
+└── package.json
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Usage Flow
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Select Field**: Choose your field of expertise
+2. **Answer Questionnaire**: Fill out field-specific questions
+3. **Upload Documents**: Upload CV and supporting documents
+4. **View Results**: See likelihood score, strengths, gaps, and personalized roadmap
 
-## Deploy on Vercel
+## Environment Variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `NEXT_PUBLIC_API_URL`: Backend API URL (default: http://localhost:8000)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Development
+
+```bash
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+
+# Run linting
+npm run lint
+```
+
+## API Integration
+
+The frontend communicates with the backend API at the URL specified in `NEXT_PUBLIC_API_URL`. Make sure the backend is running before starting the frontend.
+
+Backend should be running at `http://localhost:8000` (see backend/README.md)
+
+## Components
+
+### FieldSelection
+First step where user selects their field (Digital Technology, Arts & Culture, or Science & Research).
+
+### QuestionnaireStep
+Dynamic questionnaire based on selected field. Questions include years of experience, publications, awards, etc.
+
+### DocumentUpload
+Multi-file upload interface for PDF documents (CV, recommendation letters, portfolio items).
+
+### AnalysisResults
+Results display showing:
+- Likelihood percentage with visual progress ring
+- Assessment level (Exceptional Talent / Exceptional Promise)
+- Strengths list
+- Gaps with severity indicators
+- Personalized roadmap with milestones
+
+## Styling
+
+Uses Tailwind CSS for styling with a modern, clean design featuring:
+- Gradient backgrounds
+- Card-based layouts
+- Smooth transitions
+- Responsive design
+- Professional color scheme (blues, greens, grays)
+
+## Notes
+
+- All API calls are handled through the `apiClient` in `lib/api.ts`
+- Session management is handled by the backend
+- Analysis can take 1-2 minutes depending on document size
+- Progress is shown with a dynamic progress bar
