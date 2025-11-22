@@ -128,6 +128,71 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
         doc.text(splitAssessment, margin, yPos);
         yPos += (splitAssessment.length * 7) + 10;
 
+        // Portfolio Analysis Section (if available)
+        if (results.results.analysis.portfolio_summary && results.results.analysis.portfolio_summary.accessible) {
+            // Check if we need a new page
+            if (yPos > 240) {
+                doc.addPage();
+                yPos = 20;
+            }
+
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Portfolio Analysis', margin, yPos);
+            yPos += 10;
+
+            // Portfolio URL
+            if (results.results.analysis.portfolio_summary.url) {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(100, 100, 100);
+                doc.text('Portfolio URL:', margin, yPos);
+                yPos += 5;
+                doc.setTextColor(0, 0, 255);
+                doc.textWithLink(results.results.analysis.portfolio_summary.url, margin, yPos, { url: results.results.analysis.portfolio_summary.url });
+                yPos += 10;
+                doc.setTextColor(0, 0, 0);
+            }
+
+            // Key Findings
+            if (results.results.analysis.portfolio_summary.key_findings && results.results.analysis.portfolio_summary.key_findings.length > 0) {
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Key Findings:', margin, yPos);
+                yPos += 7;
+
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                results.results.analysis.portfolio_summary.key_findings.forEach((finding, idx) => {
+                    const splitFinding = doc.splitTextToSize(`${idx + 1}. ${finding}`, pageWidth - (margin * 2 + 5));
+                    doc.text(splitFinding, margin + 5, yPos);
+                    yPos += (splitFinding.length * 5) + 3;
+                });
+                yPos += 5;
+            }
+
+            // Portfolio Strengths and Gaps Table
+            const portfolioData: string[][] = [];
+            if (results.results.analysis.portfolio_summary.strengths_from_portfolio || results.results.analysis.portfolio_summary.gaps_from_portfolio) {
+                portfolioData.push([
+                    results.results.analysis.portfolio_summary.strengths_from_portfolio || 'N/A',
+                    results.results.analysis.portfolio_summary.gaps_from_portfolio || 'N/A'
+                ]);
+
+                autoTable(doc, {
+                    startY: yPos,
+                    head: [['Portfolio Strengths', 'Portfolio Improvements']],
+                    body: portfolioData,
+                    headStyles: { fillColor: [147, 51, 234] }, // Purple color
+                    theme: 'grid',
+                    styles: { cellPadding: 5, fontSize: 9 }
+                });
+
+                // @ts-ignore
+                yPos = doc.lastAutoTable.finalY + 15;
+            }
+        }
+
         // CV Analysis (New Section)
         if (results.results.analysis.cv_feedback) {
             doc.setFontSize(16);

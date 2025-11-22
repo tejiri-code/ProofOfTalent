@@ -475,6 +475,33 @@ def analyze_portfolio_website(portfolio_url: str) -> Dict[str, Any]:
         text_content = re.sub(r'<[^>]+>', ' ', text_content)
         text_content = re.sub(r'\s+', ' ', text_content).strip()
         
+        # Check if we got meaningful content (JavaScript-heavy sites might return very little)
+        if len(text_content) < 100 or 'enable JavaScript' in text_content:
+            print(f"⚠️  Portfolio appears to be JavaScript-heavy (only {len(text_content)} chars extracted)")
+            print("   Attempting to use rendering service...")
+            
+            # Try using a headless browser rendering service as fallback
+            # Using a free public API that renders JavaScript
+            try:
+                render_url = f"https://r.jina.ai/{portfolio_url}"
+                render_response = requests.get(render_url, headers=headers, timeout=20)
+                
+                if render_response.status_code == 200:
+                    rendered_text = render_response.text
+                    # Clean up the rendered content
+                    rendered_text = re.sub(r'\s+', ' ', rendered_text).strip()
+                    
+                    if len(rendered_text) > len(text_content):
+                        print(f"✅ Successfully rendered JavaScript content ({len(rendered_text)} chars)")
+                        text_content = rendered_text
+                    else:
+                        print("   Rendering service didn't improve results, using original")
+                else:
+                    print(f"   Rendering service returned status {render_response.status_code}")
+            except Exception as render_error:
+                print(f"   Rendering service failed: {render_error}")
+                print("   Continuing with original extraction...")
+        
         # Truncate if too long (keep first 5000 chars for LLM context)
         if len(text_content) > 5000:
             text_content = text_content[:5000] + "... [truncated]"
