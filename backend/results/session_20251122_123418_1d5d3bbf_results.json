@@ -1,0 +1,119 @@
+{
+  "field": "digital_technology",
+  "timestamp": "2025-11-22T12:36:49.605638+00:00",
+  "documents_analyzed": {
+    "cv": true,
+    "recommendation_letters_count": 0,
+    "portfolio_items_count": 0
+  },
+  "external_data": {
+    "github": false,
+    "linkedin": true
+  },
+  "analysis": {
+    "likelihood": 0.5,
+    "assessment_level": "Exceptional Promise",
+    "evidence_present": {
+      "mandatory_documents": {
+        "cv": "complete",
+        "recommendation_letters": "missing",
+        "portfolio_evidence": "weak"
+      },
+      "innovation_evidence": [
+        "Contributed to full-stack development of scalable applications",
+        "Led agile sprints, code reviews, and testing to ensure software quality"
+      ],
+      "recognition_evidence": [
+        "Published research or technical documentation",
+        "Industry awards"
+      ]
+    },
+    "gaps": [
+      {
+        "type": "Recommendation Letters",
+        "severity": "critical",
+        "description": "The candidate has not provided any recommendation letters. These are mandatory for the Global Talent visa application.",
+        "recommendation": "The candidate should obtain and submit three recommendation letters from senior professionals or organizations in their field."
+      },
+      {
+        "type": "Portfolio Evidence",
+        "severity": "high",
+        "description": "The candidate has not provided any portfolio evidence. This is a key part of demonstrating their skills and achievements in the digital technology field.",
+        "recommendation": "The candidate should provide up to 10 pieces of evidence from the last 5 years, such as projects they've worked on, code they've written, or other relevant work."
+      }
+    ],
+    "strengths": [
+      "The candidate has a strong technical background and has demonstrated innovation in their work.",
+      "The candidate has received industry awards and has published research, indicating recognition in their field."
+    ],
+    "overall_assessment": "The candidate shows promise in the field of digital technology, with a strong technical background and evidence of innovation in their work. However, the lack of recommendation letters and portfolio evidence significantly impacts their application. If these gaps are addressed, the candidate could potentially qualify for the Exceptional Promise level of the Global Talent visa.",
+    "next_steps": [
+      "Obtain and submit three recommendation letters from senior professionals or organizations in their field.",
+      "Provide up to 10 pieces of evidence from the last 5 years to demonstrate skills and achievements in the digital technology field."
+    ]
+  },
+  "roadmap": {
+    "milestones": [
+      {
+        "title": "Identify Potential Recommenders",
+        "description": "Identify and reach out to at least five senior professionals or organizations in your field who can provide strong recommendation letters. This includes drafting a request letter, explaining the purpose, and providing them with any necessary information about your achievements.",
+        "duration_weeks": 2,
+        "priority": "critical",
+        "evidence_to_collect": [],
+        "addresses_gaps": [
+          "Recommendation Letters"
+        ]
+      },
+      {
+        "title": "Obtain Recommendation Letters",
+        "description": "Follow up with the identified recommenders, provide any additional information they need, and obtain the recommendation letters. Ensure that the letters are in the correct format and contain all necessary information.",
+        "duration_weeks": 4,
+        "priority": "critical",
+        "evidence_to_collect": [
+          "Recommendation letters"
+        ],
+        "addresses_gaps": [
+          "Recommendation Letters"
+        ]
+      },
+      {
+        "title": "Identify Portfolio Evidence",
+        "description": "Identify up to 10 pieces of evidence from the last 5 years that demonstrate your skills and achievements in the digital technology field. This could include projects you've worked on, code you've written, or other relevant work.",
+        "duration_weeks": 4,
+        "priority": "high",
+        "evidence_to_collect": [],
+        "addresses_gaps": [
+          "Portfolio Evidence"
+        ]
+      },
+      {
+        "title": "Collect and Prepare Portfolio Evidence",
+        "description": "Collect the identified evidence and prepare it for submission. This includes ensuring that each piece of evidence is in the correct format, clearly demonstrates your skills and achievements, and is accompanied by a brief explanation.",
+        "duration_weeks": 6,
+        "priority": "high",
+        "evidence_to_collect": [
+          "Portfolio evidence"
+        ],
+        "addresses_gaps": [
+          "Portfolio Evidence"
+        ]
+      },
+      {
+        "title": "Review and Finalize Application",
+        "description": "Review the entire application, including recommendation letters and portfolio evidence, to ensure that everything is in order. Make any necessary revisions and finalize the application for submission.",
+        "duration_weeks": 2,
+        "priority": "medium",
+        "evidence_to_collect": [],
+        "addresses_gaps": []
+      }
+    ],
+    "total_weeks": 18,
+    "feasibility_assessment": "The timeline is realistic and allows for some flexibility. However, it is important to start early and stay organized to ensure that all tasks are completed on time.",
+    "critical_path": [
+      "Identify Potential Recommenders",
+      "Obtain Recommendation Letters",
+      "Identify Portfolio Evidence",
+      "Collect and Prepare Portfolio Evidence"
+    ]
+  }
+}
