@@ -42,7 +42,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <button
                             onClick={onStart}
-                            className="px-8 py-4 bg-blue-600 text-white text-lg font-bold rounded-full hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-1 w-full sm:w-auto"
+                            className="md:px-8 md:py-4 px-10 py-4 bg-blue-600 text-white text-lg font-bold rounded-full hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-1 md:w-full sm:w-auto"
                         >
                             Check My Eligibility
                         </button>
