@@ -13,6 +13,42 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
 
+    const [loadingStep, setLoadingStep] = useState(0);
+    const [progress, setProgress] = useState(0);
+
+    const ANALYSIS_STEPS = [
+        "Analyzing CV content and structure...",
+        "Extracting key skills and achievements...",
+        "Matching against Global Talent Visa criteria...",
+        "Identifying evidence gaps...",
+        "Generating personalized roadmap..."
+    ];
+
+    useEffect(() => {
+        if (!loading) return;
+
+        // Simulate progress
+        const interval = setInterval(() => {
+            setProgress(prev => {
+                if (prev >= 95) return prev;
+                return prev + 1;
+            });
+        }, 100);
+
+        // Simulate steps
+        const stepInterval = setInterval(() => {
+            setLoadingStep(prev => {
+                if (prev >= ANALYSIS_STEPS.length - 1) return prev;
+                return prev + 1;
+            });
+        }, 2000);
+
+        return () => {
+            clearInterval(interval);
+            clearInterval(stepInterval);
+        };
+    }, [loading]);
+
     useEffect(() => {
         const runAnalysis = async () => {
             try {
@@ -23,8 +59,11 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
                 const checkResults = async () => {
                     const data = await apiClient.getResults(sessionId);
                     if (data.status === 'completed' && data.results) {
-                        setResults(data);
-                        setLoading(false);
+                        setProgress(100);
+                        setTimeout(() => {
+                            setResults(data);
+                            setLoading(false);
+                        }, 500); // Small delay to show 100%
                     } else if (data.status === 'error') {
                         setError('Analysis failed. Please try again.');
                         setLoading(false);
@@ -46,11 +85,45 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
 
     if (loading) {
         return (
-            <div className="max-w-4xl mx-auto p-6">
-                <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">Analyzing Your Application</h2>
-                    <p className="text-gray-600">This may take a minute...</p>
+            <div className="max-w-2xl mx-auto p-6">
+                <div className="bg-white rounded-lg shadow-lg p-8">
+                    <div className="text-center mb-8">
+                        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Analyzing Your Profile</h2>
+                        <p className="text-gray-600">Please wait while we process your documents</p>
+                    </div>
+
+                    <div className="space-y-6">
+                        {/* Progress Bar */}
+                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                            <div
+                                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                                style={{ width: `${progress}%` }}
+                            ></div>
+                        </div>
+
+                        {/* Steps */}
+                        <div className="space-y-3">
+                            {ANALYSIS_STEPS.map((step, index) => (
+                                <div key={index} className="flex items-center space-x-3">
+                                    <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${index < loadingStep ? 'bg-green-500 text-white' :
+                                            index === loadingStep ? 'bg-blue-500 text-white animate-pulse' :
+                                                'bg-gray-200'
+                                        }`}>
+                                        {index < loadingStep && (
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        )}
+                                    </div>
+                                    <span className={`text-sm ${index <= loadingStep ? 'text-gray-900 font-medium' : 'text-gray-400'
+                                        }`}>
+                                        {step}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         );
