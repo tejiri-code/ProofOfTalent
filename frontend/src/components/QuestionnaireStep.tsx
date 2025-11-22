@@ -6,13 +6,14 @@ import { apiClient, type Question } from '@/lib/api';
 interface QuestionnaireStepProps {
     field: string;
     sessionId: string;
+    initialResponses?: Record<string, any>;
     onNext: (responses: Record<string, any>) => void;
     onBack: () => void;
 }
 
-export default function QuestionnaireStep({ field, sessionId, onNext, onBack }: QuestionnaireStepProps) {
+export default function QuestionnaireStep({ field, sessionId, initialResponses = {}, onNext, onBack }: QuestionnaireStepProps) {
     const [questions, setQuestions] = useState<Question[]>([]);
-    const [responses, setResponses] = useState<Record<string, any>>({});
+    const [responses, setResponses] = useState<Record<string, any>>(initialResponses);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
 
@@ -57,8 +58,8 @@ export default function QuestionnaireStep({ field, sessionId, onNext, onBack }: 
                     <div className="flex space-x-4">
                         {['yes', 'no'].map((option) => (
                             <label key={option} className={`flex-1 flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer transition-all ${(option === 'yes' && value === true) || (option === 'no' && value === false)
-                                    ? 'border-blue-500 bg-blue-50 text-blue-700 font-bold'
-                                    : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                                ? 'border-blue-500 bg-blue-50 text-blue-700 font-bold'
+                                : 'border-gray-200 hover:border-gray-300 text-gray-600'
                                 }`}>
                                 <input
                                     type="radio"

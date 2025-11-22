@@ -5,18 +5,22 @@ import { apiClient } from '@/lib/api';
 
 interface DocumentUploadProps {
     sessionId: string;
+    initialFiles?: File[];
+    onFilesChange?: (files: File[]) => void;
     onNext: () => void;
     onBack: () => void;
 }
 
-export default function DocumentUpload({ sessionId, onNext, onBack }: DocumentUploadProps) {
-    const [files, setFiles] = useState<File[]>([]);
+export default function DocumentUpload({ sessionId, initialFiles = [], onFilesChange, onNext, onBack }: DocumentUploadProps) {
+    const [files, setFiles] = useState<File[]>(initialFiles);
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string>('');
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
-            setFiles(Array.from(e.target.files));
+            const newFiles = Array.from(e.target.files);
+            setFiles(newFiles);
+            if (onFilesChange) onFilesChange(newFiles);
         }
     };
 
@@ -40,7 +44,9 @@ export default function DocumentUpload({ sessionId, onNext, onBack }: DocumentUp
     };
 
     const removeFile = (index: number) => {
-        setFiles(files.filter((_, i) => i !== index));
+        const newFiles = files.filter((_, i) => i !== index);
+        setFiles(newFiles);
+        if (onFilesChange) onFilesChange(newFiles);
     };
 
     return (

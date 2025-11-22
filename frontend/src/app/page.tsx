@@ -13,6 +13,7 @@ export default function Home() {
   const [field, setField] = useState<string>('');
   const [sessionId, setSessionId] = useState<string>('');
   const [questionnaireResponses, setQuestionnaireResponses] = useState<Record<string, any>>({});
+  const [files, setFiles] = useState<File[]>([]);
 
   const handleFieldNext = (selectedField: string, newSessionId: string) => {
     setField(selectedField);
@@ -34,6 +35,34 @@ export default function Home() {
     setField('');
     setSessionId('');
     setQuestionnaireResponses({});
+    setFiles([]);
+  };
+
+  // Navigation handler
+  const handleStepClick = (stepIndex: number) => {
+    const steps: Step[] = ['field', 'questionnaire', 'upload', 'results'];
+    const currentStepIndex = steps.indexOf(currentStep);
+
+    // Allow going back to any previous step
+    // Allow going forward only if we have the necessary data for that step
+    if (stepIndex < currentStepIndex) {
+      setCurrentStep(steps[stepIndex]);
+    } else if (stepIndex === currentStepIndex) {
+      // Do nothing if clicking current step
+      return;
+    } else {
+      // Logic for forward navigation via progress bar (optional, usually restricted)
+      // For now, we only allow clicking if we've already completed the previous steps
+      // But since we don't track "completed" separately from "current", 
+      // we can just check if we have the data.
+
+      if (stepIndex === 1 && field && sessionId) {
+        setCurrentStep('questionnaire');
+      } else if (stepIndex === 2 && Object.keys(questionnaireResponses).length > 0) {
+        setCurrentStep('upload');
+      }
+      // We generally don't allow jumping to results without uploading
+    }
   };
 
   return (
@@ -47,8 +76,15 @@ export default function Home() {
             const isActive = idx === stepIndex;
             const isComplete = idx < stepIndex;
 
+            // Determine if step is clickable
+            const isClickable = idx < stepIndex || (idx === 1 && field && sessionId) || (idx === 2 && Object.keys(questionnaireResponses).length > 0);
+
             return (
-              <div key={label} className="flex items-center flex-1 min-w-[120px] md:min-w-0">
+              <div
+                key={label}
+                className={`flex items-center flex-1 min-w-[120px] md:min-w-0 ${isClickable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
+                onClick={() => isClickable && handleStepClick(idx)}
+              >
                 <div className="flex items-center">
                   <div
                     className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-semibold text-sm md:text-base transition-colors duration-300 ${isComplete
@@ -93,6 +129,7 @@ export default function Home() {
           <QuestionnaireStep
             field={field}
             sessionId={sessionId}
+            initialResponses={questionnaireResponses}
             onNext={handleQuestionnaireNext}
             onBack={() => setCurrentStep('field')}
           />
@@ -101,6 +138,8 @@ export default function Home() {
         {currentStep === 'upload' && (
           <DocumentUpload
             sessionId={sessionId}
+            initialFiles={files}
+            onFilesChange={setFiles}
             onNext={handleUploadNext}
             onBack={() => setCurrentStep('questionnaire')}
           />
