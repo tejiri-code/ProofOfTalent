@@ -327,6 +327,87 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
                 </div>
             </div>
 
+            {/* Portfolio Summary Section */}
+            {analysis.portfolio_summary && analysis.portfolio_summary.accessible && (
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow-xl p-8 md:p-10 border border-purple-100">
+                    <div className="flex items-center mb-6">
+                        <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mr-4">
+                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 className="text-2xl font-bold text-gray-900">Portfolio Analysis</h3>
+                            <p className="text-sm text-gray-600 mt-1">Insights from your online portfolio</p>
+                        </div>
+                    </div>
+
+                    {analysis.portfolio_summary.url && (
+                        <div className="mb-6 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-purple-200">
+                            <span className="text-xs font-bold text-purple-700 uppercase tracking-wide block mb-2">Portfolio URL</span>
+                            <a
+                                href={analysis.portfolio_summary.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-700 font-medium break-all flex items-center group"
+                            >
+                                {analysis.portfolio_summary.url}
+                                <svg className="w-4 h-4 ml-1 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                            </a>
+                        </div>
+                    )}
+
+                    {analysis.portfolio_summary.key_findings && analysis.portfolio_summary.key_findings.length > 0 && (
+                        <div className="mb-6 bg-white/70 backdrop-blur-sm p-5 rounded-xl border border-purple-200">
+                            <h4 className="text-sm font-bold text-purple-900 uppercase tracking-wide mb-4 flex items-center">
+                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                                Key Findings
+                            </h4>
+                            <ul className="space-y-3">
+                                {analysis.portfolio_summary.key_findings.map((finding, idx) => (
+                                    <li key={idx} className="flex items-start">
+                                        <span className="w-6 h-6 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center mr-3 mt-0.5 flex-shrink-0 text-xs font-bold">
+                                            {idx + 1}
+                                        </span>
+                                        <span className="text-gray-700 leading-relaxed">{finding}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {analysis.portfolio_summary.strengths_from_portfolio && (
+                            <div className="bg-white/70 backdrop-blur-sm p-5 rounded-xl border border-green-200">
+                                <h4 className="text-sm font-bold text-green-800 uppercase tracking-wide mb-3 flex items-center">
+                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                                    </svg>
+                                    Portfolio Strengths
+                                </h4>
+                                <p className="text-gray-700 leading-relaxed text-sm">{analysis.portfolio_summary.strengths_from_portfolio}</p>
+                            </div>
+                        )}
+
+                        {analysis.portfolio_summary.gaps_from_portfolio && (
+                            <div className="bg-white/70 backdrop-blur-sm p-5 rounded-xl border border-amber-200">
+                                <h4 className="text-sm font-bold text-amber-800 uppercase tracking-wide mb-3 flex items-center">
+                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Portfolio Improvements
+                                </h4>
+                                <p className="text-gray-700 leading-relaxed text-sm">{analysis.portfolio_summary.gaps_from_portfolio}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+
             <div className="grid md:grid-cols-2 gap-8">
                 {/* Strengths */}
                 {analysis.cv_feedback && analysis.cv_feedback.strengths?.length > 0 && (

@@ -33,6 +33,13 @@ export interface AnalysisResult {
       likelihood: number;
       assessment_level: string;
       evidence_present: any;
+      portfolio_summary?: {
+        accessible: boolean;
+        url?: string;
+        key_findings?: string[];
+        strengths_from_portfolio?: string;
+        gaps_from_portfolio?: string;
+      };
       gaps: Array<{
         type: string;
         severity: string;
@@ -45,6 +52,7 @@ export interface AnalysisResult {
         score: number;
         strengths: string[];
         weaknesses: string[];
+        improvement_recommendations?: string[];
       };
     };
     roadmap: {

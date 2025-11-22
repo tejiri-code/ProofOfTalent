@@ -596,7 +596,7 @@ Note: Portfolio could not be accessed - {portfolio_data.get('error')}
     prompt += """
 
 **YOUR TASK:**
-Evaluate this candidate's application against the official Global Talent visa criteria. Provide a detailed assessment in JSON format with the following structure:
+Evaluate this candidate's application against the official Global Talent visa criteria. Provide a detailed, comprehensive assessment in JSON format with the following structure:
 
 {
     "likelihood": <float between 0.0 and 1.0>,
@@ -607,57 +607,71 @@ Evaluate this candidate's application against the official Global Talent visa cr
             "recommendation_letters": <"complete" (3 letters) or "incomplete" (fewer than 3) or "missing">,
             "portfolio_evidence": <"strong" or "adequate" or "weak">
         },
-        "innovation_evidence": [<list of identified innovation evidence>],
-        "recognition_evidence": [<list of identified recognition evidence>]
+        "innovation_evidence": [<list of identified innovation evidence with details>],
+        "recognition_evidence": [<list of identified recognition evidence with details>]
+    },
+    "portfolio_summary": {
+        "accessible": <true/false - was the portfolio successfully accessed>,
+        "url": "<portfolio URL if provided>",
+        "key_findings": [<list of 3-5 specific projects, achievements, or highlights found on the portfolio>],
+        "strengths_from_portfolio": "<paragraph describing what strengths are evident from the portfolio>",
+        "gaps_from_portfolio": "<paragraph describing what's missing or could be improved in the portfolio>"
     },
     "cv_feedback": {
         "score": <integer 0-10 representing CV quality for this visa>,
-        "strengths": [<list of specific strengths - MUST reference actual CV content with quotes or specific examples>],
-        "weaknesses": [<list of specific weaknesses - MUST reference actual CV gaps or issues with specific examples>]
+        "strengths": [<list of 4-6 detailed, specific strengths with examples from CV>],
+        "weaknesses": [<list of 4-6 detailed, specific weaknesses with examples>],
+        "improvement_recommendations": [<list of 3-5 actionable recommendations to improve the CV>]
     },
     "gaps": [
         {
             "type": "<gap type>",
             "severity": "<critical, high, medium, low>",
-            "description": "<detailed description of what's missing>",
-            "recommendation": "<specific action to address this gap>"
+            "description": "<detailed 2-3 sentence description of what's missing>",
+            "recommendation": "<detailed, specific action to address this gap with examples>"
         }
     ],
-    "strengths": [<list of key strengths - MUST reference specific CV points, achievements, or experiences>],
-    "overall_assessment": "<detailed paragraph explaining the likelihood score>",
-    "next_steps": [<list of recommended actions>]
+    "strengths": [<list of 5-7 key strengths with specific details and CV/portfolio references>],
+    "overall_assessment": "<detailed 3-4 paragraph assessment explaining the likelihood score, key strengths, main concerns, and overall recommendation>",
+    "next_steps": [<list of 5-8 prioritized, actionable recommendations>]
 }
 
 **CRITICAL INSTRUCTIONS:**
-1. Be thorough and precise. Base your assessment on actual evidence provided, not assumptions.
+1. BE DETAILED AND DESCRIPTIVE: Each point should be a complete sentence or two, not just a brief phrase. Provide context and specific examples.
 
-2. For "cv_feedback.strengths": You MUST reference specific points from the CV. Examples:
-   - "CV shows 8+ years of experience at leading tech companies including [Company Name] as [Role]"
-   - "Strong evidence of innovation through [specific project/achievement mentioned in CV]"
-   - "Clear progression from [junior role] to [senior role] demonstrating career growth"
-   
-3. For "cv_feedback.weaknesses": You MUST identify specific gaps or issues in the CV. Examples:
-   - "CV lacks quantifiable metrics for achievements (e.g., no mention of team size, impact, or scale)"
-   - "Missing clear evidence of international recognition or publications"
-   - "Work experience section doesn't highlight innovation contributions sufficiently"
-   
-4. For "strengths": Reference concrete CV points AND portfolio content (if provided), not generic statements. Examples:
-   - "Led development of [specific technology/product mentioned] at [Company]"
-   - "Published [number] technical papers in [specific areas mentioned in CV]"
-   - "Portfolio showcases [specific project] demonstrating [specific skill or innovation]"
-   - "Founded [company name] which achieved [specific milestone from CV]"
-   
-5. **PORTFOLIO EVALUATION** (if portfolio website was provided):
-   - Reference specific projects, work samples, or achievements visible on the portfolio
-   - Evaluate how well the portfolio demonstrates innovation, recognition, or expertise required for the visa
-   - Note if portfolio provides evidence not present in the CV
-   - Comment on presentation quality and professional branding if relevant to the field
-   
-6. Avoid generic statements like "good technical background" or "strong experience". Instead, cite specific roles, companies, technologies, achievements, or portfolio projects.
+2. For "portfolio_summary":
+   - If portfolio was accessible, list 3-5 SPECIFIC projects, tools, or achievements you found
+   - Quote or describe actual content you saw on the portfolio
+   - Explain how the portfolio complements or contradicts the CV
+   - If portfolio was not accessible, explain why and what impact this has
 
-7. If the CV is missing critical information for the visa criteria, explicitly state what's absent and where it should be included.
+3. For "cv_feedback.strengths": Write 4-6 DETAILED points (2-3 sentences each) referencing specific CV content:
+   - "The CV demonstrates 8+ years of progressive experience in software engineering, starting as a Junior Developer at [Company A] in 2015 and advancing to Senior Tech Lead at [Company B] by 2020. This clear career progression shows sustained growth in the field."
+   - "Strong evidence of technical innovation is shown through leading the development of [specific system/product], which [specific achievement like 'reduced processing time by 60%' or 'serves 2M users daily']."
+   
+4. For "cv_feedback.weaknesses": Write 4-6 DETAILED points (2-3 sentences each) with specific examples:
+   - "While the CV lists multiple projects, it lacks quantifiable metrics for impact. For example, the [Project X] description should include metrics like user adoption, performance improvements, or business value generated."
+   - "The CV does not provide evidence of international recognition such as speaking engagements, awards, or publications in reputable venues, which are important criteria for this visa category."
 
-8. Cross-reference evidence across different sources (CV, portfolio, GitHub, letters) to build a comprehensive picture of the candidate's qualifications.
+5. For "cv_feedback.improvement_recommendations": Provide 3-5 ACTIONABLE suggestions:
+   - "Add a 'Key Achievements' section at the top highlighting your 3-5 most impressive accomplishments with quantifiable metrics"
+   - "Under each role, include specific metrics (team size, budget, users impacted, performance improvements)"
+   
+6. For "strengths": List 5-7 detailed strengths (2-3 sentences each) that cite SPECIFIC evidence:
+   - "Demonstrated innovation leadership through founding [Company/Project Name] in [Year], which achieved [specific milestone like funding, users, or recognition]. This is evidenced in both the CV employment history and corroborated by the portfolio showing the live product."
+   - "Strong open-source contribution record with [X] GitHub stars across [Y] repositories, particularly the [Project Name] which has been adopted by [specific companies or use cases]. This demonstrates recognition beyond immediate employment."
+
+7. For "overall_assessment": Write 3-4 DETAILED paragraphs:
+   - Paragraph 1: Overall likelihood assessment and key strengths
+   - Paragraph 2: Main areas of concern or gaps
+   - Paragraph 3: Comparison to typical successful applications
+   - Paragraph 4: Final recommendation and confidence level
+
+8. **PORTFOLIO INTEGRATION**: Whenever you mention a strength or weakness, check if the portfolio provides additional evidence. Explicitly state: "This is further evidenced by the portfolio which shows..." or "However, the portfolio does not demonstrate..."
+
+9. AVOID: Generic phrases like "good experience", "strong background", "many achievements". ALWAYS be specific with names, numbers, dates, and concrete examples.
+
+10. Cross-reference ALL sources (CV, portfolio, GitHub, letters) in your analysis. Point out consistencies and discrepancies.
 """
     
     try:
@@ -665,7 +679,7 @@ Evaluate this candidate's application against the official Global Talent visa cr
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.2,
-            max_tokens=2000
+            max_tokens=3500
         )
         
         content = response.choices[0].message.content.strip()
