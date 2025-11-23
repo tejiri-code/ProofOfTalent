@@ -12,7 +12,7 @@ import uvicorn
 import os
 import json
 import shutil
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from pathlib import Path
 from bson import ObjectId
@@ -361,7 +361,30 @@ async def run_analysis_task(session_id: str):
                 }
             }
         )
-        logger.info(f"Analysis completed for session {session_id}")
+        
+        # ALSO save to cv_analyses collection for dataset/dashboard generation
+        cv_analysis_record = {
+            "session_id": session_id,
+            "field": session["field"],
+            "upload_date": session.get("created_at", datetime.utcnow()),
+            "processing_status": "completed",
+            "completed_at": datetime.utcnow(),
+            "document_count": len(document_paths),
+            "questionnaire_responses": session["questionnaire_responses"],
+            "analysis_results": results,
+            # Extract key metrics for easy querying
+            "overall_score": results.get("overall_assessment", {}).get("score"),
+            "likelihood": results.get("overall_assessment", {}).get("likelihood"),
+            "recommendation": results.get("overall_assessment", {}).get("recommendation"),
+            "strengths_count": len(results.get("strengths", [])),
+            "weaknesses_count": len(results.get("weaknesses", [])),
+            "evidence_gaps_count": len(results.get("evidence_gaps", [])),
+            # Metadata for analytics
+            "created_at": datetime.utcnow()
+        }
+        
+        await db.cv_analyses.insert_one(cv_analysis_record)
+        logger.info(f"Analysis completed and saved to cv_analyses for session {session_id}")
         
     except Exception as e:
         logger.error(f"Analysis failed for session {session_id}: {e}")
@@ -374,6 +397,19 @@ async def run_analysis_task(session_id: str):
                 }
             }
         )
+        
+        # Also save error to cv_analyses for tracking
+        try:
+            await db.cv_analyses.insert_one({
+                "session_id": session_id,
+                "field": session.get("field"),
+                "upload_date": session.get("created_at", datetime.utcnow()),
+                "processing_status": "error",
+                "error_message": str(e),
+                "created_at": datetime.utcnow()
+            })
+        except:
+            pass  # Don't fail if we can't save error record
 
 @app.get("/api/results/{session_id}")
 async def get_results(session_id: str):
@@ -609,6 +645,151 @@ async def analyze_cv_v1(
     # For brevity, I'm omitting the full implementation here as the frontend uses the original endpoints
     # But in a real scenario, we would keep this for the new features
     pass
+
+
+# ---------------------------------------------------------
+# Analytics & Dashboard Endpoints
+# ---------------------------------------------------------
+
+@app.get("/api/analytics/overview")
+async def get_analytics_overview():
+    """Get overview analytics for dashboard"""
+    try:
+        db = get_database()
+        
+        # Total analyses
+        total_analyses = await db.cv_analyses.count_documents({})
+        
+        # Completed vs errors
+        completed = await db.cv_analyses.count_documents({"processing_status": "completed"})
+        errors = await db.cv_analyses.count_documents({"processing_status": "error"})
+        
+        # By field
+        field_pipeline = [
+            {"$match": {"processing_status": "completed"}},
+            {"$group": {
+                "_id": "$field",
+                "count": {"$sum": 1},
+                "avg_score": {"$avg": "$overall_score"},
+                "avg_likelihood": {"$avg": "$likelihood"}
+            }}
+        ]
+        by_field = await db.cv_analyses.aggregate(field_pipeline).to_list(length=100)
+        
+        # By recommendation
+        recommendation_pipeline = [
+            {"$match": {"processing_status": "completed"}},
+            {"$group": {
+                "_id": "$recommendation",
+                "count": {"$sum": 1}
+            }}
+        ]
+        by_recommendation = await db.cv_analyses.aggregate(recommendation_pipeline).to_list(length=100)
+        
+        # Recent analyses (last 30 days)
+        thirty_days_ago = datetime.utcnow() - timedelta(days=30)
+        recent_count = await db.cv_analyses.count_documents({
+            "created_at": {"$gte": thirty_days_ago}
+        })
+        
+        return {
+            "total_analyses": total_analyses,
+            "completed": completed,
+            "errors": errors,
+            "success_rate": (completed / total_analyses * 100) if total_analyses > 0 else 0,
+            "by_field": by_field,
+            "by_recommendation": by_recommendation,
+            "recent_30_days": recent_count
+        }
+    except Exception as e:
+        logger.error(f"Error fetching analytics: {e}")
+        return {
+            "total_analyses": 0,
+            "completed": 0,
+            "errors": 0,
+            "success_rate": 0,
+            "by_field": [],
+            "by_recommendation": [],
+            "recent_30_days": 0,
+            "error": str(e)
+        }
+
+@app.get("/api/analytics/analyses")
+async def get_all_analyses(
+    skip: int = 0,
+    limit: int = 50,
+    field: Optional[str] = None,
+    status: Optional[str] = None
+):
+    """Get list of all analyses with optional filtering"""
+    try:
+        db = get_database()
+        
+        # Build query
+        query = {}
+        if field:
+            query["field"] = field
+        if status:
+            query["processing_status"] = status
+        
+        # Get analyses
+        analyses = await db.cv_analyses.find(query)\
+            .sort("created_at", -1)\
+            .skip(skip)\
+            .limit(limit)\
+            .to_list(length=limit)
+        
+        # Convert ObjectId to string for JSON serialization
+        for analysis in analyses:
+            if "_id" in analysis:
+                analysis["_id"] = str(analysis["_id"])
+        
+        total = await db.cv_analyses.count_documents(query)
+        
+        return {
+            "analyses": analyses,
+            "total": total,
+            "skip": skip,
+            "limit": limit
+        }
+    except Exception as e:
+        logger.error(f"Error fetching analyses: {e}")
+        return {
+            "analyses": [],
+            "total": 0,
+            "skip": skip,
+            "limit": limit,
+            "error": str(e)
+        }
+
+@app.get("/api/analytics/export")
+async def export_dataset():
+    """Export all analyses as dataset for external analysis"""
+    try:
+        db = get_database()
+        
+        # Get all completed analyses
+        analyses = await db.cv_analyses.find(
+            {"processing_status": "completed"}
+        ).to_list(length=10000)
+        
+        # Convert ObjectId to string
+        for analysis in analyses:
+            if "_id" in analysis:
+                analysis["_id"] = str(analysis["_id"])
+        
+        return {
+            "dataset": analyses,
+            "count": len(analyses),
+            "exported_at": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        logger.error(f"Error exporting dataset: {e}")
+        return {
+            "dataset": [],
+            "count": 0,
+            "error": str(e)
+        }
 
 # Health check endpoints
 @app.get("/")
