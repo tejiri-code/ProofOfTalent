@@ -55,9 +55,9 @@ export default function QuestionnaireStep({ field, sessionId, initialResponses =
                 );
             case 'yes_no':
                 return (
-                    <div className="flex space-x-4">
+                    <div className="flex gap-3 sm:gap-4">
                         {['yes', 'no'].map((option) => (
-                            <label key={option} className={`flex-1 flex items-center justify-center p-4 border-2 rounded-xl cursor-pointer transition-all ${(option === 'yes' && value === true) || (option === 'no' && value === false)
+                            <label key={option} className={`flex-1 flex items-center justify-center p-3 sm:p-4 border-2 rounded-xl cursor-pointer transition-all min-h-[48px] ${(option === 'yes' && value === true) || (option === 'no' && value === false)
                                 ? 'border-blue-500 bg-blue-50 text-blue-700 font-bold'
                                 : 'border-gray-200 hover:border-gray-300 text-gray-600'
                                 }`}>
@@ -117,16 +117,16 @@ export default function QuestionnaireStep({ field, sessionId, initialResponses =
 
     return (
         <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
-                <div className="mb-8">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2 text-shadow-sm">Questionnaire</h2>
-                    <p className="text-gray-700 font-medium">Please answer the following questions to help us assess your profile.</p>
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 border border-gray-100">
+                <div className="mb-6 sm:mb-8">
+                    <h2 className="text-2xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 text-shadow-sm">Questionnaire</h2>
+                    <p className="text-sm sm:text-base text-gray-700 font-medium">Please answer the following questions to help us assess your profile.</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
                     {questions.map((question) => (
-                        <div key={question.id} className="bg-gray-50 p-6 rounded-xl border border-gray-100">
-                            <label className="block text-base font-semibold text-gray-900 mb-3 leading-snug">
+                        <div key={question.id} className="bg-gray-50 p-4 sm:p-5 md:p-6 rounded-xl border border-gray-100">
+                            <label className="block text-sm sm:text-base font-semibold text-gray-900 mb-3 leading-snug">
                                 {question.question}
                                 {question.required && <span className="text-red-500 ml-1">*</span>}
                             </label>
@@ -143,18 +143,18 @@ export default function QuestionnaireStep({ field, sessionId, initialResponses =
                         </div>
                     )}
 
-                    <div className="flex flex-col-reverse md:flex-row gap-4 pt-4">
+                    <div className="flex flex-col-reverse sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
                         <button
                             type="button"
                             onClick={onBack}
-                            className="px-8 py-4 border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all"
+                            className="w-full sm:w-auto px-6 sm:px-8 py-3.5 sm:py-4 border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all min-h-[48px]"
                         >
                             Back
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 py-4 px-8 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-0.5"
+                            className="flex-1 py-3.5 sm:py-4 px-6 sm:px-8 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 disabled:opacity-50 transition-all shadow-lg shadow-blue-200 hover:shadow-blue-300 transform hover:-translate-y-0.5 min-h-[48px]"
                         >
                             {loading ? (
                                 <span className="flex items-center justify-center">

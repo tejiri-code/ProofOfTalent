@@ -7,6 +7,7 @@ import DocumentUpload from '@/components/DocumentUpload';
 import AnalysisResults from '@/components/AnalysisResults';
 import Header from '@/components/Header';
 import LandingPage from '@/components/LandingPage';
+import CookieConsent from '@/components/CookieConsent';
 
 type Step = 'landing' | 'field' | 'questionnaire' | 'upload' | 'results';
 
@@ -169,6 +170,7 @@ export default function Home() {
           </div>
         </div>
       )}
+      <CookieConsent />
     </main>
   );
 }

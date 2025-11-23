@@ -128,8 +128,9 @@ async def startup_event():
         await connect_to_mongo()
         logger.info("✅ Startup complete")
     except Exception as e:
-        logger.error(f"Error during startup: {e}")
-        raise
+        logger.warning(f"⚠️ MongoDB connection failed: {e}")
+        logger.warning("Server will start anyway - some features may be limited")
+        # Don't raise - allow server to start without MongoDB
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -417,29 +418,181 @@ async def get_session_status(session_id: str):
 @app.delete("/api/session/{session_id}")
 async def delete_session(session_id: str):
     """Delete a session and its associated files"""
+    try:
+        db = get_database()
+        session = await db.sessions.find_one({"session_id": session_id})
+        
+        if not session:
+            # Session not found in DB, but still try to delete files
+            logger.warning(f"Session {session_id} not found in database, attempting file cleanup")
+        
+        # Delete uploaded files
+        session_dir = UPLOAD_DIR / session_id
+        if session_dir.exists():
+            shutil.rmtree(session_dir)
+            logger.info(f"Deleted session directory: {session_dir}")
+        
+        # Delete results file
+        if session and session.get("results_file"):
+            results_file = Path(session["results_file"])
+            if results_file.exists():
+                results_file.unlink()
+                logger.info(f"Deleted results file: {results_file}")
+        
+        # Remove session from MongoDB
+        if session:
+            await db.sessions.delete_one({"session_id": session_id})
+        
+        return {
+            "status": "success",
+            "message": f"Session {session_id} deleted successfully"
+        }
+    except Exception as e:
+        # If MongoDB isn't available, still try to delete files
+        logger.warning(f"Error accessing database for session {session_id}: {e}")
+        logger.info("Attempting file cleanup without database...")
+        
+        try:
+            # Delete uploaded files
+            session_dir = UPLOAD_DIR / session_id
+            if session_dir.exists():
+                shutil.rmtree(session_dir)
+                logger.info(f"Deleted session directory: {session_dir}")
+            
+            # Try to delete any results files for this session
+            for results_file in RESULTS_DIR.glob(f"{session_id}*"):
+                results_file.unlink()
+                logger.info(f"Deleted results file: {results_file}")
+            
+            return {
+                "status": "success",
+                "message": f"Session {session_id} files deleted (database unavailable)"
+            }
+        except Exception as file_error:
+            logger.error(f"Error deleting files for session {session_id}: {file_error}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to delete session data: {str(file_error)}"
+            )
+
+@app.post("/api/gdpr/delete-data")
+async def gdpr_delete_user_data(session_id: str):
+    """
+    GDPR-compliant data deletion endpoint.
+    Deletes all user data associated with a session and logs the deletion for audit purposes.
+    
+    This endpoint implements the "Right to Erasure" under GDPR Article 17.
+    """
     db = get_database()
     session = await db.sessions.find_one({"session_id": session_id})
     
     if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
+        raise HTTPException(status_code=404, detail="Session not found or already deleted")
     
-    # Delete uploaded files
-    session_dir = UPLOAD_DIR / session_id
-    if session_dir.exists():
-        shutil.rmtree(session_dir)
+    deletion_record = {
+        "session_id": session_id,
+        "deletion_requested_at": datetime.utcnow(),
+        "data_deleted": {
+            "documents": [],
+            "results_file": None,
+            "session_directory": None
+        },
+        "deletion_status": "in_progress"
+    }
     
-    # Delete results file
-    if session.get("results_file"):
-        results_file = Path(session["results_file"])
-        if results_file.exists():
-            results_file.unlink()
+    try:
+        # 1. Delete uploaded files
+        session_dir = UPLOAD_DIR / session_id
+        if session_dir.exists():
+            file_count = len(list(session_dir.glob('*')))
+            shutil.rmtree(session_dir)
+            deletion_record["data_deleted"]["session_directory"] = str(session_dir)
+            deletion_record["data_deleted"]["documents"] = [
+                doc.get("filename") for doc in session.get("documents", [])
+            ]
+            logger.info(f"Deleted {file_count} files from {session_dir}")
+        
+        # 2. Delete results file
+        if session.get("results_file"):
+            results_file = Path(session["results_file"])
+            if results_file.exists():
+                results_file.unlink()
+                deletion_record["data_deleted"]["results_file"] = str(results_file)
+                logger.info(f"Deleted results file: {results_file}")
+        
+        # 3. Remove session from MongoDB
+        await db.sessions.delete_one({"session_id": session_id})
+        logger.info(f"Deleted session record from database: {session_id}")
+        
+        # 4. Log deletion for GDPR audit trail
+        deletion_record["deletion_status"] = "completed"
+        deletion_record["completed_at"] = datetime.utcnow()
+        await db.gdpr_deletions.insert_one(deletion_record)
+        
+        return {
+            "status": "success",
+            "message": "All your data has been permanently deleted in compliance with GDPR",
+            "session_id": session_id,
+            "deleted_at": deletion_record["completed_at"].isoformat(),
+            "data_removed": {
+                "documents_count": len(deletion_record["data_deleted"]["documents"]),
+                "results_deleted": deletion_record["data_deleted"]["results_file"] is not None,
+                "session_data_deleted": True
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Error during GDPR data deletion for session {session_id}: {e}")
+        deletion_record["deletion_status"] = "failed"
+        deletion_record["error"] = str(e)
+        deletion_record["failed_at"] = datetime.utcnow()
+        
+        # Still log the failed attempt
+        try:
+            await db.gdpr_deletions.insert_one(deletion_record)
+        except:
+            pass
+        
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to delete data: {str(e)}"
+        )
+
+@app.get("/api/gdpr/deletion-status/{session_id}")
+async def get_deletion_status(session_id: str):
+    """
+    Check if data for a session has been deleted (GDPR audit trail)
+    """
+    db = get_database()
     
-    # Remove session from MongoDB
-    await db.sessions.delete_one({"session_id": session_id})
+    # Check if session still exists
+    session = await db.sessions.find_one({"session_id": session_id})
+    
+    if session:
+        return {
+            "session_id": session_id,
+            "status": "active",
+            "message": "Data still exists and has not been deleted"
+        }
+    
+    # Check deletion records
+    deletion_record = await db.gdpr_deletions.find_one(
+        {"session_id": session_id},
+        sort=[("deletion_requested_at", -1)]
+    )
+    
+    if deletion_record:
+        return {
+            "session_id": session_id,
+            "status": "deleted",
+            "deleted_at": deletion_record.get("completed_at"),
+            "deletion_status": deletion_record.get("deletion_status")
+        }
     
     return {
-        "status": "success",
-        "message": f"Session {session_id} deleted"
+        "session_id": session_id,
+        "status": "not_found",
+        "message": "No record found for this session"
     }
 
 # ---------------------------------------------------------

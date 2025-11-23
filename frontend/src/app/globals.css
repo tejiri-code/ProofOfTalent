@@ -28,7 +28,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Enhanced Typography */
+/* Enhanced Typography with Better Mobile Scaling */
 h1,
 h2,
 h3,
@@ -41,16 +41,16 @@ h6 {
 }
 
 h1 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.75rem, 5vw + 0.5rem, 3.5rem);
   font-weight: 800;
 }
 
 h2 {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(1.5rem, 4vw + 0.25rem, 2.5rem);
 }
 
 h3 {
-  font-size: clamp(1.25rem, 3vw, 1.875rem);
+  font-size: clamp(1.25rem, 3vw + 0.25rem, 1.875rem);
 }
 
 p {
@@ -76,4 +76,52 @@ p {
 
 .text-shadow-lg {
   text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Utilities */
+@media (max-width: 640px) {
+
+  /* Ensure touch targets are at least 44x44px on mobile */
+  button,
+  a,
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+  }
+}
+
+/* Animation Utilities */
+@keyframes blob {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+/* Smooth Scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }

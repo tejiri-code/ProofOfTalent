@@ -14,6 +14,8 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
     const [results, setResults] = useState<AnalysisResult | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const [loadingStep, setLoadingStep] = useState(0);
     const [progress, setProgress] = useState(0);
@@ -269,7 +271,40 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
             columnStyles: { 3: { cellWidth: 80 } }
         });
 
-        doc.save(`global-talent-assessment-${new Date().toISOString().split('T')[0]}.pdf`);
+        doc.save(`global-talent-visa-assessment-${new Date().toISOString().split('T')[0]}.pdf`);
+    };
+
+    const handleDeleteData = async () => {
+        setDeleting(true);
+        try {
+            // Use the existing session delete endpoint which already works
+            const response = await fetch(
+                `https://proofoftalent.onrender.com/api/session/${sessionId}`,
+                { method: 'DELETE' }
+            );
+
+            if (!response.ok) {
+                throw new Error('Failed to delete data');
+            }
+
+            const result = await response.json();
+
+            // Clear local storage
+            localStorage.clear();
+
+            // Show success message
+            alert(`✅ Data Deleted Successfully\n\nAll your data has been permanently deleted.\n\n${result.message}`);
+
+            // Redirect to home
+            onNewStart();
+
+        } catch (err) {
+            console.error('Error deleting data:', err);
+            alert('❌ Failed to delete data. Please try again or contact support.');
+        } finally {
+            setDeleting(false);
+            setShowDeleteDialog(false);
+        }
     };
 
     if (loading) {
@@ -347,28 +382,28 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
     const likelihoodPercent = (analysis.likelihood * 100).toFixed(1);
 
     return (
-        <div className="max-w-5xl mx-auto space-y-8">
+        <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
             {/* Header Section */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100 overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-50 to-purple-50 rounded-bl-full -mr-16 -mt-16 opacity-50"></div>
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 border border-gray-100 overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-48 h-48 sm:w-64 sm:h-64 bg-gradient-to-br from-blue-50 to-purple-50 rounded-bl-full -mr-16 -mt-16 opacity-50"></div>
 
-                <div className="relative flex flex-col md:flex-row items-center md:items-start justify-between gap-8">
-                    <div className="flex-1 text-center md:text-left">
-                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Analysis Complete</h2>
-                        <p className="text-gray-600 mb-6">Here's your personalized assessment for the Global Talent Visa</p>
+                <div className="relative flex flex-col items-center gap-6 sm:gap-8">
+                    <div className="flex-1 text-center w-full">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">Analysis Complete</h2>
+                        <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Here's your personalized assessment for the Global Talent Visa</p>
 
-                        <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-lg border border-blue-100 mb-6">
-                            <span className="text-blue-700 font-medium mr-2">Assessment Level:</span>
-                            <span className="text-blue-900 font-bold">{analysis.assessment_level}</span>
+                        <div className="inline-flex items-center px-4 py-2 bg-blue-50 rounded-lg border border-blue-100 mb-4 sm:mb-6">
+                            <span className="text-sm sm:text-base text-blue-700 font-medium mr-2">Assessment Level:</span>
+                            <span className="text-sm sm:text-base text-blue-900 font-bold">{analysis.assessment_level}</span>
                         </div>
 
-                        <p className="text-gray-700 leading-relaxed bg-gray-50 p-6 rounded-xl border border-gray-100">
+                        <p className="text-sm sm:text-base text-gray-700 leading-relaxed bg-gray-50 p-4 sm:p-6 rounded-xl border border-gray-100">
                             {analysis.overall_assessment}
                         </p>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center bg-white p-6 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-100">
-                        <div className="relative w-40 h-40 mb-4">
+                    <div className="flex flex-col items-center justify-center bg-white p-4 sm:p-6 rounded-2xl shadow-[0_0_20px_rgba(0,0,0,0.05)] border border-gray-100">
+                        <div className="relative w-32 h-32 sm:w-40 sm:h-40 mb-3 sm:mb-4">
                             <svg className="transform -rotate-90 w-full h-full" viewBox="0 0 120 120">
                                 <circle cx="60" cy="60" r="54" fill="none" stroke="#f3f4f6" strokeWidth="8" />
                                 <circle
@@ -384,8 +419,8 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
                                 />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-4xl font-bold text-gray-900">{likelihoodPercent}%</span>
-                                <span className="text-xs text-gray-500 font-medium uppercase tracking-wide mt-1">Success Rate</span>
+                                <span className="text-3xl sm:text-4xl font-bold text-gray-900">{likelihoodPercent}%</span>
+                                <span className="text-[10px] sm:text-xs text-gray-500 font-medium uppercase tracking-wide mt-1">Success Rate</span>
                             </div>
                         </div>
                     </div>
@@ -394,16 +429,16 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
 
             {/* Portfolio Summary Section */}
             {analysis.portfolio_summary && analysis.portfolio_summary.accessible && (
-                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow-xl p-8 md:p-10 border border-purple-100">
-                    <div className="flex items-center mb-6">
-                        <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center mr-4">
-                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 border border-purple-100">
+                    <div className="flex items-center mb-4 sm:mb-6">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-600 rounded-xl flex items-center justify-center mr-3 sm:mr-4">
+                            <svg className="w-6 h-6 sm:w-7 sm:h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                             </svg>
                         </div>
                         <div>
-                            <h3 className="text-2xl font-bold text-gray-900">Portfolio Analysis</h3>
-                            <p className="text-sm text-gray-600 mt-1">Insights from your online portfolio</p>
+                            <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Portfolio Analysis</h3>
+                            <p className="text-xs sm:text-sm text-gray-600 mt-1">Insights from your online portfolio</p>
                         </div>
                     </div>
 
@@ -473,19 +508,19 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
                 </div>
             )}
 
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
                 {/* Strengths */}
                 {analysis.cv_feedback && analysis.cv_feedback.strengths?.length > 0 && (
-                    <div className="bg-white rounded-2xl shadow-xl p-8 border-l-4 border-green-500 h-full">
-                        <div className="flex items-center mb-6">
-                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border-l-4 border-green-500 h-full">
+                        <div className="flex items-center mb-4 sm:mb-6">
+                            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900">Key Strengths</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-900">Key Strengths</h3>
                         </div>
-                        <ul className="space-y-4">
+                        <ul className="space-y-3 sm:space-y-4">
                             {analysis.cv_feedback.strengths.map((strength, idx) => (
                                 <li key={idx} className="flex items-start p-3 bg-green-50/50 rounded-lg">
                                     <span className="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
@@ -498,16 +533,16 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
 
                 {/* Gaps */}
                 {analysis.cv_feedback && analysis.cv_feedback.weaknesses?.length > 0 && (
-                    <div className="bg-white rounded-2xl shadow-xl p-8 border-l-4 border-amber-500 h-full">
-                        <div className="flex items-center mb-6">
-                            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
-                                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 border-l-4 border-amber-500 h-full">
+                        <div className="flex items-center mb-4 sm:mb-6">
+                            <div className="w-9 h-9 sm:w-10 sm:h-10 bg-amber-100 rounded-lg flex items-center justify-center mr-3">
+                                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
                             </div>
-                            <h3 className="text-xl font-bold text-gray-900">Areas for Improvement</h3>
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-900">Areas for Improvement</h3>
                         </div>
-                        <ul className="space-y-4">
+                        <ul className="space-y-3 sm:space-y-4">
                             {analysis.cv_feedback.weaknesses.map((weakness, idx) => (
                                 <li key={idx} className="flex items-start p-3 bg-amber-50/50 rounded-lg">
                                     <span className="w-1.5 h-1.5 bg-amber-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
@@ -520,30 +555,30 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
             </div>
 
             {/* Roadmap */}
-            <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 border border-gray-100">
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+            <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-10 border border-gray-100">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8 gap-3 sm:gap-4">
                     <div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">Personalized Roadmap</h3>
-                        <p className="text-gray-600">Estimated Timeline: <span className="font-semibold text-blue-600">{roadmap.total_weeks} weeks</span></p>
+                        <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Personalized Roadmap</h3>
+                        <p className="text-sm sm:text-base text-gray-600">Estimated Timeline: <span className="font-semibold text-blue-600">{roadmap.total_weeks} weeks</span></p>
                     </div>
-                    <div className="bg-blue-50 px-4 py-2 rounded-lg border border-blue-100">
-                        <span className="text-blue-800 font-medium">{roadmap.feasibility_assessment}</span>
+                    <div className="bg-blue-50 px-3 sm:px-4 py-2 rounded-lg border border-blue-100">
+                        <span className="text-xs sm:text-sm text-blue-800 font-medium">{roadmap.feasibility_assessment}</span>
                     </div>
                 </div>
 
-                <div className="relative space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
+                <div className="relative space-y-6 sm:space-y-8 before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
                     {roadmap.milestones.map((milestone, idx) => (
-                        <div key={idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                        <div key={idx} className="relative flex items-start md:items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                             <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-slate-300 group-[.is-active]:bg-blue-500 text-slate-500 group-[.is-active]:text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                                 <span className="font-bold text-sm">{idx + 1}</span>
                             </div>
 
-                            <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h4 className="font-bold text-lg text-gray-900">{milestone.title}</h4>
-                                    <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded">{milestone.duration_weeks} weeks</span>
+                            <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-white p-4 sm:p-5 md:p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
+                                    <h4 className="font-bold text-base sm:text-lg text-gray-900">{milestone.title}</h4>
+                                    <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded self-start sm:self-auto">{milestone.duration_weeks} weeks</span>
                                 </div>
-                                <p className="text-gray-600 mb-4 text-sm">{milestone.description}</p>
+                                <p className="text-gray-600 mb-3 sm:mb-4 text-sm">{milestone.description}</p>
 
                                 {milestone.evidence_to_collect.length > 0 && (
                                     <div className="bg-gray-50 p-3 rounded-lg">
@@ -564,22 +599,127 @@ export default function AnalysisResults({ sessionId, onNewStart }: AnalysisResul
                 </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 pt-4">
+            {/* Legal Disclaimer */}
+            <div className="bg-amber-50 border-l-4 border-amber-400 p-4 sm:p-6 rounded-lg">
+                <div className="flex items-start">
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-amber-600 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div>
+                        <h4 className="text-sm sm:text-base font-bold text-amber-900 mb-1">Legal Disclaimer</h4>
+                        <p className="text-xs sm:text-sm text-amber-800 leading-relaxed">
+                            This analysis provides guidance and recommendations only. It is <strong>not legal advice</strong> and should not be relied upon as such. For official guidance on your visa application, please consult with a qualified immigration lawyer.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
                 <button
                     onClick={onNewStart}
-                    className="flex-1 py-4 px-6 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all"
+                    className="w-full sm:flex-1 py-3.5 sm:py-4 px-6 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all min-h-[48px]"
                 >
                     Start New Analysis
                 </button>
                 <button
                     onClick={generatePDF}
-                    className="flex-1 py-4 px-6 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all transform hover:-translate-y-0.5 flex items-center justify-center"
+                    className="w-full sm:flex-1 py-3.5 sm:py-4 px-6 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all transform hover:-translate-y-0.5 flex items-center justify-center min-h-[48px]"
                 >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
                     Download Full PDF Report
                 </button>
+            </div> */}
+
+            {/* Delete Data Dialog */}
+            {showDeleteDialog && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-8 animate-in slide-in-from-bottom duration-300">
+                        <div className="flex items-start mb-4">
+                            <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-xl font-bold text-gray-900 mb-2">Delete All Data?</h3>
+                                <p className="text-sm text-gray-700 leading-relaxed">
+                                    This will permanently delete:
+                                </p>
+                                <ul className="mt-3 space-y-1 text-sm text-gray-700">
+                                    <li>• All uploaded documents</li>
+                                    <li>• Your analysis results</li>
+                                    <li>• All session data</li>
+                                </ul>
+                                <p className="mt-3 text-xs text-red-600 font-semibold">
+                                    ⚠️ This action cannot be undone.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                            <button
+                                onClick={() => setShowDeleteDialog(false)}
+                                disabled={deleting}
+                                className="flex-1 py-3 px-6 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleDeleteData}
+                                disabled={deleting}
+                                className="flex-1 py-3 px-6 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-h-[48px]"
+                            >
+                                {deleting ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Deleting...
+                                    </>
+                                ) : (
+                                    'Delete My Data'
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
+                <button
+                    onClick={onNewStart}
+                    className="w-full sm:flex-1 py-3.5 sm:py-4 px-6 bg-white border-2 border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all min-h-[48px]"
+                >
+                    Start New Analysis
+                </button>
+                <button
+                    onClick={generatePDF}
+                    className="w-full sm:flex-1 py-3.5 sm:py-4 px-6 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all transform hover:-translate-y-0.5 flex items-center justify-center min-h-[48px]"
+                >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Full PDF Report
+                </button>
+            </div>
+
+            {/* GDPR Data Deletion Button */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+                <button
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="w-full py-3 px-6 bg-white border-2 border-red-200 text-red-600 font-medium rounded-xl hover:bg-red-50 hover:border-red-300 transition-all flex items-center justify-center min-h-[48px] group"
+                >
+                    <svg className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    <span>Request Data Deletion (GDPR)</span>
+                </button>
+                <p className="text-xs text-gray-500 text-center mt-2">
+                    Permanently delete all your data from our systems
+                </p>
             </div>
         </div>
     );
