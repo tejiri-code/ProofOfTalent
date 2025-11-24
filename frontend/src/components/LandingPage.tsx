@@ -40,6 +40,24 @@ export default function LandingPage({ onStart }: LandingPageProps) {
                         Get a detailed evidence gap analysis and strategic roadmap in minutes.
                     </p>
 
+                    {/* Demo Video - Clean & Simple */}
+                    <div className="pt-6 sm:pt-8 max-w-3xl mx-auto px-4">
+                        <div className="relative rounded-xl overflow-hidden shadow-2xl bg-gray-900">
+                            <video
+                                className="w-full h-auto"
+                                controls
+                                playsInline
+                                preload="metadata"
+                            >
+                                <source src="/Screen Recording 2025-11-23 at 8.03.02 pm.mp4" type="video/mp4" />
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <p className="text-center text-sm text-gray-600 mt-3">
+                            Watch how it works in 2 minutes
+                        </p>
+                    </div>
+
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 pt-2 sm:pt-4 px-4">
                         <button
                             onClick={onStart}
